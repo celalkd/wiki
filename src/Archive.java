@@ -145,27 +145,3 @@ public class Archive {
 		FileIO.getFileIO().writeWordsAndFreqsToFile(language);
 	}
 }
-
-
-
-
-
-
-/*case 4:
-String[] genre = dataColumns[i].split(",");
-for(int j=0; j< genre.length; j++){
-	//genre ekle
-	if(j!=0){
-		genre[j]=genre[j].substring(1, genre[j].length());
-	}
-	System.out.println("g: "+genre[j]);
-}
-break;
-case 5:
-String imdbRating = dataColumns[i];
-System.out.println("imdb: "+imdbRating);
-break;
-case 6:
-String tomatoRating = dataColumns[i];
-System.out.println("tomtom: "+tomatoRating);
-break;*/
