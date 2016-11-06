@@ -15,7 +15,6 @@ public class InfoBox {
 	
 	//CONSTRUCTORS
 	public InfoBox(){
-		
 	}
 	public InfoBox(String vikiURL){
 		/*

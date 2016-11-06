@@ -1,4 +1,9 @@
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,6 +22,9 @@ public class Movie {
 	private InfoBox infoBox;
 	private boolean verified;
 	
+	private ArrayList<Word> wordListTr = new ArrayList<Word>();
+	private ArrayList<Word> wordListEng = new ArrayList<Word>();
+	
 	//CONSTRUCTORS
 	public Movie(){
 		setVikiURL_TR("TÜRKÇE KAYNAK BULUNAMADI");//türkçe kaynak bulunamazsa bu deðer böyle kalacaktýr.
@@ -29,6 +37,39 @@ public class Movie {
 	}	
 	
 	//FUNCTIONS
+	public String findContext(String url) throws IOException{
+		Document doc = Jsoup.connect(url).get();
+		String textBody = doc.select("div#mw-content-text").text();
+		
+		return textBody;
+	}
+	public void splitContext(String textBody, ArrayList<Word> wordList){
+		/*String[] eklerTR={"ta","te","da","de","a","e","ý","i","dan","den","ten","tan"};
+		ArrayList<String> eklerTRList = new ArrayList<>();
+		eklerTRList.addAll(Arrays.asList(eklerTR));*/
+		
+		String[] words = textBody.split("[\\p{Punct}\\s]+");
+		for(String w : words){
+			if(Character.isLetter(w.charAt(0))){//word sayý deðil ise
+				searchWordAndIncFreq(w,wordList);
+			}
+		}
+		Collections.sort(wordList, new CustomComparator());
+	}
+	public void searchWordAndIncFreq(String str, ArrayList<Word> wordList){
+		str = str.toLowerCase();
+		boolean find=false;
+        for(Word obj: wordList){
+            if(obj.getWord().equals(str)){//bu word varsa freq arttýr
+                obj.incFreq();
+                find=true;
+            }
+        }
+        if(!find){//bu word bulunamadýysa
+            Word obj = new Word(str);//yeni yarat(fre1=1 yapýldý constructorda)
+            wordList.add(obj);
+        }
+	}
 	public void setActiveVikiURL(){
 		/*
 		 * setActiveWikiLink() methodu çalýþtýktan sonra elimizde movienin eriþilebilir ve doðru inglizce linki var
@@ -82,6 +123,18 @@ public class Movie {
 	}
 	
 	//GETTER-STTER METHODLARI
+	public ArrayList<Word> getWordListTr() {
+		return wordListTr;
+	}
+	public void setWordListTr(ArrayList<Word> wordListTr) {
+		this.wordListTr = wordListTr;
+	}
+	public ArrayList<Word> getWordListEng() {
+		return wordListEng;
+	}
+	public void setWordListEng(ArrayList<Word> wordListEng) {
+		this.wordListEng = wordListEng;
+	}
 	public InfoBox getInfoBox() {
 		return infoBox;
 	}

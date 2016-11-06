@@ -1,6 +1,7 @@
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Archive {
 	
@@ -27,6 +28,7 @@ public class Archive {
 	}
 	
 	//FUNCTIONS
+	
 	public void getMovies(String content) throws IOException{
 		/*
 		 * dosya içeriðini çevirdiðimiz stringi | 'a göre ayýrýp fieldlarý doldurduðumuz
@@ -126,6 +128,21 @@ public class Archive {
 			id++;
 		}
 		
+	}
+	public void writeMovieWordsToFile(String language) throws IOException{
+		
+		for(Movie movie : this.getMovieArchive()){
+			if(language.equals("TR")){
+				String textBody = movie.findContext(movie.getVikiURL_TR());
+				
+				movie.splitContext(textBody, movie.getWordListTr());
+			}
+			else if(language.equals("ENG")){
+				String textBody = movie.findContext(movie.getWikiURL_EN());
+				movie.splitContext(textBody, movie.getWordListEng());
+			}
+		}
+		FileIO.getFileIO().writeWordsAndFreqsToFile(language);
 	}
 }
 

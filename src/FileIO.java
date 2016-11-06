@@ -23,6 +23,49 @@ public class FileIO {
 	}
 	
 	//FUNCTIONS
+	public void openandWritetoFile() throws IOException{
+		
+		File file = new File("C:\\Users\\celalkd\\workspace_\\WikiMining\\resources\\AllMovies.txt");
+		file.createNewFile();
+		FileWriter fos= new FileWriter(file);
+		for(Movie item: Archive.getArchive().getMovieArchive()){
+			fos.write(item.toString()+"\n");
+		}
+		fos.flush();
+		fos.close();
+		
+	}
+	public void writeWordsAndFreqsToFile(String langFolder) throws IOException{
+		for(Movie item: Archive.getArchive().getMovieArchive()){
+			File file = new File("C:\\Users\\celalkd\\workspace_\\WikiMining\\resources\\"+langFolder+"\\"+item.getInfoBox().getTitle()+".txt");
+			file.createNewFile();
+			FileWriter fos= new FileWriter(file);
+			if(langFolder.equals("TR")){
+				for(Word w : item.getWordListTr()){
+					fos.write("WORD: "+w.getWord()+", FREQ: "+w.getFreq()+"\n");
+				}
+			}
+			else if(langFolder.equals("ENG")){
+				for(Word w : item.getWordListEng()){
+					fos.write("WORD: "+w.getWord()+", FREQ: "+w.getFreq()+"\n");
+				}
+			}
+			fos.flush();
+			fos.close();
+		}
+		
+	}
+	public void appendtoFile(String str) throws IOException{
+		File file = new File("C:\\Users\\celalkd\\workspace_\\WikiMining\\resources\\AllMovies.txt");
+		try{
+			FileWriter fw = new FileWriter(file);	
+		    BufferedWriter bw = new BufferedWriter(fw);
+		    PrintWriter out = new PrintWriter(bw);
+		    out.println(str);
+		}catch (IOException e) {
+		    //exception handling left as an exercise for the reader
+		}		
+	}
 	public String fileToString(String fileName) throws IOException{
 		/*
 		 * dosya adýný alýp, bu dosyanýn içerðini string olarak döndüren method
