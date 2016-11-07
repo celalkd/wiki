@@ -37,21 +37,32 @@ public class FileIO {
 	}
 	public void writeWordsAndFreqsToFile(String langFolder) throws IOException{
 		for(Movie item: Archive.getArchive().getMovieArchive()){
-			File file = new File("C:\\Users\\celalkd\\workspace_\\WikiMining\\resources\\"+langFolder+"\\"+item.getInfoBox().getTitle()+".txt");
-			file.createNewFile();
-			FileWriter fos= new FileWriter(file);
+			File file_freq = new File("C:\\Users\\celalkd\\workspace_\\WikiMining\\resources\\"+langFolder+"\\FREQ\\"+item.getInfoBox().getTitle()+".txt");
+			File file_context = new File("C:\\Users\\celalkd\\workspace_\\WikiMining\\resources\\"+langFolder+"\\CONTEXT\\"+item.getInfoBox().getTitle()+".txt");
+
+			file_freq.createNewFile();
+			file_context.createNewFile();
+			
+			FileWriter fos_freq= new FileWriter(file_freq);
+			FileWriter fos_context= new FileWriter(file_context);
 			if(langFolder.equals("TR")){
 				for(Word w : item.getWordListTr()){
-					fos.write("WORD: "+w.getWord()+", FREQ: "+w.getFreq()+"\n");
+					fos_freq.write("WORD: "+w.getWord()+", FREQ: "+w.getFreq()+"\n");
 				}
+				fos_context.write(item.getContext_TR());
+				
 			}
 			else if(langFolder.equals("ENG")){
 				for(Word w : item.getWordListEng()){
-					fos.write("WORD: "+w.getWord()+", FREQ: "+w.getFreq()+"\n");
+					fos_freq.write("WORD: "+w.getWord()+", FREQ: "+w.getFreq()+"\n");
 				}
+				fos_context.write(item.getContext_ENG());
 			}
-			fos.flush();
-			fos.close();
+			fos_freq.flush();
+			fos_freq.close();
+			
+			fos_context.flush();
+			fos_context.close();
 		}
 		
 	}

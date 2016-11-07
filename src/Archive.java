@@ -133,12 +133,12 @@ public class Archive {
 		
 		for(Movie movie : this.getMovieArchive()){
 			if(language.equals("TR")){
-				String textBody = movie.findContext(movie.getVikiURL_TR());
+				String textBody = movie.findContext(movie.getVikiURL_TR(),"TR");
 				
 				movie.splitContext(textBody, movie.getWordListTr());
 			}
 			else if(language.equals("ENG")){
-				String textBody = movie.findContext(movie.getWikiURL_EN());
+				String textBody = movie.findContext(movie.getWikiURL_EN(),"ENG");
 				movie.splitContext(textBody, movie.getWordListEng());
 			}
 		}

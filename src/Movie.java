@@ -19,6 +19,10 @@ public class Movie {
 	private String vikiURL_TR;
 	private String wikiURL_EN;
 	private String year;
+	private String context_TR;
+	private String context_ENG;
+
+	
 	private InfoBox infoBox;
 	private boolean verified;
 	
@@ -37,10 +41,14 @@ public class Movie {
 	}	
 	
 	//FUNCTIONS
-	public String findContext(String url) throws IOException{
+	public String findContext(String url, String language) throws IOException{
 		Document doc = Jsoup.connect(url).get();
 		String textBody = doc.select("div#mw-content-text").text();
+		if(language.equals("TR"))
+			this.setContext_TR(textBody);
 		
+		else if(language.equals("ENG"))
+			this.setContext_ENG(textBody);
 		return textBody;
 	}
 	public void splitContext(String textBody, ArrayList<Word> wordList){
@@ -188,6 +196,18 @@ public class Movie {
 	}
 	public void setVerifySuccess(float verifySuccess) {
 		Movie.verifySuccess = verifySuccess;
+	}
+	public String getContext_TR() {
+		return context_TR;
+	}
+	public void setContext_TR(String context) {
+		this.context_TR = context;
+	}
+	public String getContext_ENG() {
+		return context_ENG;
+	}
+	public void setContext_ENG(String context) {
+		this.context_ENG = context;
 	}
 	
 	
