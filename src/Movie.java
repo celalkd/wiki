@@ -42,8 +42,11 @@ public class Movie {
 	
 	//FUNCTIONS
 	public String findContext(String url, String language) throws IOException{
+		//verilen url'ye göre context bulan method(url movie objesine ait wiki ve ya viki)
+		//archivede movieArchive listesindeki her bir movienin body contextini almak için kullanýcak
 		Document doc = Jsoup.connect(url).get();
 		String textBody = doc.select("div#mw-content-text").text();
+		//verilen dil seçeneðine göre movie'ye ait context fiedlarýný seçiyor(eng veya tr)
 		if(language.equals("TR"))
 			this.setContext_TR(textBody);
 		
@@ -52,32 +55,37 @@ public class Movie {
 		return textBody;
 	}
 	public void splitContext(String textBody, ArrayList<Word> wordList){
-		/*String[] eklerTR={"ta","te","da","de","a","e","ý","i","dan","den","ten","tan"};
-		ArrayList<String> eklerTRList = new ArrayList<>();
-		eklerTRList.addAll(Arrays.asList(eklerTR));*/
-		
+		//verilen contexti kelimelere ayýran method	
+		//archivede movieArchive listesindeki her bir movienin body contextini kelimelerini ayýrmak için
 		String[] words = textBody.split("[\\p{Punct}\\s]+");
 		for(String w : words){
-			if(Character.isLetter(w.charAt(0))){//word sayý deðil ise
-				searchWordAndIncFreq(w,wordList);
+			if(Character.isLetter(w.charAt(0)) ){//word sayý deðil ise
+				//eldeki kelimeyi arama iþlemi aþaðýdaki method ile yapýlacak
+				searchWordAndIncFreq(w,wordList);				
 			}
 		}
 		Collections.sort(wordList, new CustomComparator());
 	}
 	public void searchWordAndIncFreq(String str, ArrayList<Word> wordList){
+		//tüm kelimeler küçük harfe çevrilir(Movie ve movie kelimeleri frklý sayýlmasýn diye)
 		str = str.toLowerCase();
-		boolean find=false;
-        for(Word obj: wordList){
-            if(obj.getWord().equals(str)){//bu word varsa freq arttýr
-                obj.incFreq();
-                find=true;
-            }
-        }
-        if(!find){//bu word bulunamadýysa
-            Word obj = new Word(str);//yeni yarat(fre1=1 yapýldý constructorda)
-            wordList.add(obj);
-        }
+		//inglizce stopwordlistte varsa dikkate almamamýz için if kontrollü
+		if(FileIO.getFileIO().stopWordListENG.contains(str)==false)
+		{			
+			boolean find=false;
+	        for(Word obj: wordList){//methoda gönderilen wordListte var mý kontrolü(eng ve ya tr wordlist gönerilir)
+	            if(obj.getWord().equals(str)){//bu word varsa freq arttýr
+	                obj.incFreq();
+	                find=true;
+	            }
+	        }
+	        if(!find){//bu word bulunamadýysa
+	            Word obj = new Word(str);//yeni yarat(fre1=1 yapýldý constructorda)
+	            wordList.add(obj);
+	        }
+		}
 	}
+	
 	public void setActiveVikiURL(){
 		/*
 		 * setActiveWikiLink() methodu çalýþtýktan sonra elimizde movienin eriþilebilir ve doðru inglizce linki var
@@ -209,7 +217,13 @@ public class Movie {
 	public void setContext_ENG(String context) {
 		this.context_ENG = context;
 	}
-	
+	public String getContext(String language) {
+		if(language.equals("TR"))
+			return context_TR;
+		else if(language.equals("ENG"))
+			return context_ENG;
+		return null;
+	}
 	
 }
 

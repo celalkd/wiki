@@ -15,7 +15,6 @@ WORD: kaynaðý, FREQ: 10
 WORD: tarafýndan, FREQ: 9
 WORD: olan, FREQ: 9
 WORD: i?yi, FREQ: 9
-WORD: the, FREQ: 8
 WORD: mario, FREQ: 8
 WORD: puzo, FREQ: 8
 WORD: ii, FREQ: 8
@@ -53,7 +52,6 @@ WORD: için, FREQ: 4
 WORD: uyarlama, FREQ: 4
 WORD: richard, FREQ: 4
 WORD: pictures, FREQ: 4
-WORD: i, FREQ: 4
 WORD: abd, FREQ: 4
 WORD: i?ngilizce, FREQ: 4
 WORD: nun, FREQ: 4
@@ -76,7 +74,6 @@ WORD: ea, FREQ: 4
 WORD: games, FREQ: 4
 WORD: web, FREQ: 4
 WORD: bakýnýz, FREQ: 3
-WORD: s, FREQ: 3
 WORD: oyuncular, FREQ: 3
 WORD: james, FREQ: 3
 WORD: caan, FREQ: 3
@@ -93,7 +90,6 @@ WORD: dünya, FREQ: 3
 WORD: ta, FREQ: 3
 WORD: i?talyan, FREQ: 3
 WORD: gösterime, FREQ: 3
-WORD: a, FREQ: 3
 WORD: amerikan, FREQ: 3
 WORD: erkek, FREQ: 3
 WORD: senaryo, FREQ: 3
@@ -229,7 +225,6 @@ WORD: haklarý, FREQ: 2
 WORD: satýn, FREQ: 2
 WORD: alýndý, FREQ: 2
 WORD: bundan, FREQ: 2
-WORD: in, FREQ: 2
 WORD: yeni, FREQ: 2
 WORD: üzerinde, FREQ: 2
 WORD: www, FREQ: 2
@@ -242,9 +237,6 @@ WORD: eriþim, FREQ: 2
 WORD: national, FREQ: 2
 WORD: registry, FREQ: 2
 WORD: wikipedia, FREQ: 2
-WORD: g, FREQ: 2
-WORD: t, FREQ: 2
-WORD: d, FREQ: 2
 WORD: vincent, FREQ: 2
 WORD: neri, FREQ: 2
 WORD: tartaglia, FREQ: 2
@@ -484,7 +476,6 @@ WORD: stallone, FREQ: 1
 WORD: düþünülmüþtü, FREQ: 1
 WORD: picture, FREQ: 1
 WORD: oynamasý, FREQ: 1
-WORD: u, FREQ: 1
 WORD: geçirilmesini, FREQ: 1
 WORD: ödüllü, FREQ: 1
 WORD: ediyordu, FREQ: 1
@@ -681,7 +672,6 @@ WORD: yoktu, FREQ: 1
 WORD: çabuk, FREQ: 1
 WORD: bitiyordu, FREQ: 1
 WORD: þu, FREQ: 1
-WORD: an, FREQ: 1
 WORD: düzeltme, FREQ: 1
 WORD: paketi, FREQ: 1
 WORD: çalýþtýðý, FREQ: 1
@@ -781,7 +771,6 @@ WORD: benim, FREQ: 1
 WORD: tatlý, FREQ: 1
 WORD: meleðim, FREQ: 1
 WORD: neþeli, FREQ: 1
-WORD: her, FREQ: 1
 WORD: devrin, FREQ: 1
 WORD: adamý, FREQ: 1
 WORD: gecenin, FREQ: 1
@@ -799,7 +788,6 @@ WORD: rocky, FREQ: 1
 WORD: annie, FREQ: 1
 WORD: hall, FREQ: 1
 WORD: avcý, FREQ: 1
-WORD: e, FREQ: 1
 WORD: sýradan, FREQ: 1
 WORD: i?nsanlar, FREQ: 1
 WORD: tam, FREQ: 1

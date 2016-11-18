@@ -6,7 +6,6 @@ WORD: ii, FREQ: 10
 WORD: en, FREQ: 10
 WORD: i?yi, FREQ: 8
 WORD: coppola, FREQ: 7
-WORD: the, FREQ: 6
 WORD: francis, FREQ: 6
 WORD: ford, FREQ: 6
 WORD: robert, FREQ: 6
@@ -33,7 +32,6 @@ WORD: michael, FREQ: 3
 WORD: nino, FREQ: 3
 WORD: rota, FREQ: 3
 WORD: carmine, FREQ: 3
-WORD: i, FREQ: 3
 WORD: i?ngilizce, FREQ: 3
 WORD: tarihi, FREQ: 3
 WORD: com, FREQ: 3
@@ -92,9 +90,6 @@ WORD: national, FREQ: 2
 WORD: registry, FREQ: 2
 WORD: wikipedia, FREQ: 2
 WORD: imdb, FREQ: 2
-WORD: g, FREQ: 2
-WORD: t, FREQ: 2
-WORD: d, FREQ: 2
 WORD: anthony, FREQ: 2
 WORD: vincent, FREQ: 2
 WORD: neri, FREQ: 2
@@ -119,7 +114,6 @@ WORD: roos, FREQ: 1
 WORD: senarist, FREQ: 1
 WORD: lee, FREQ: 1
 WORD: strasberg, FREQ: 1
-WORD: v, FREQ: 1
 WORD: gazzo, FREQ: 1
 WORD: görüntü, FREQ: 1
 WORD: gordon, FREQ: 1
@@ -210,7 +204,6 @@ WORD: kendine, FREQ: 1
 WORD: güvene, FREQ: 1
 WORD: kavuþur, FREQ: 1
 WORD: bunlar, FREQ: 1
-WORD: a, FREQ: 1
 WORD: sadece, FREQ: 1
 WORD: güç, FREQ: 1
 WORD: deðil, FREQ: 1
@@ -265,7 +258,6 @@ WORD: tavoularis, FREQ: 1
 WORD: angelo, FREQ: 1
 WORD: graham, FREQ: 1
 WORD: george, FREQ: 1
-WORD: r, FREQ: 1
 WORD: nelson, FREQ: 1
 WORD: uyarlama, FREQ: 1
 WORD: senaryo, FREQ: 1
@@ -381,7 +373,6 @@ WORD: tatlý, FREQ: 1
 WORD: meleðim, FREQ: 1
 WORD: neþeli, FREQ: 1
 WORD: günler, FREQ: 1
-WORD: her, FREQ: 1
 WORD: devrin, FREQ: 1
 WORD: adamý, FREQ: 1
 WORD: gecenin, FREQ: 1
@@ -400,7 +391,6 @@ WORD: rocky, FREQ: 1
 WORD: annie, FREQ: 1
 WORD: hall, FREQ: 1
 WORD: avcý, FREQ: 1
-WORD: e, FREQ: 1
 WORD: karþý, FREQ: 1
 WORD: sýradan, FREQ: 1
 WORD: i?nsanlar, FREQ: 1

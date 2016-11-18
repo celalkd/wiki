@@ -131,6 +131,10 @@ public class Archive {
 	}
 	public void writeMovieWordsToFile(String language) throws IOException{
 		
+		// movieArchive listesindeki her bir movienin body contextini alýnýt
+		//daha sonra context kelimelerini ayrýþtýrýlýr
+		//ayrýþtýrýlan kelimeler movie sýnýfnfa bir listeyde saklanýr(splitContext methodu bunu yapar)
+		//daha sonra fileIo sýnýfýnýn
 		for(Movie movie : this.getMovieArchive()){
 			if(language.equals("TR")){
 				String textBody = movie.findContext(movie.getVikiURL_TR(),"TR");
@@ -142,6 +146,7 @@ public class Archive {
 				movie.splitContext(textBody, movie.getWordListEng());
 			}
 		}
+		//en son fileIO sýnýfý methodu ile her br movienin kelime listesi dökümana yazýlýr
 		FileIO.getFileIO().writeWordsAndFreqsToFile(language);
 	}
 }

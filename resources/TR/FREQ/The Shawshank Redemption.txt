@@ -4,7 +4,6 @@ WORD: film, FREQ: 9
 WORD: shawshank, FREQ: 7
 WORD: andy, FREQ: 7
 WORD: bir, FREQ: 7
-WORD: in, FREQ: 6
 WORD: dufresne, FREQ: 5
 WORD: en, FREQ: 5
 WORD: kaynaðý, FREQ: 5
@@ -22,7 +21,6 @@ WORD: darabont, FREQ: 3
 WORD: stephen, FREQ: 3
 WORD: king, FREQ: 3
 WORD: oyuncular, FREQ: 3
-WORD: a, FREQ: 3
 WORD: adlý, FREQ: 3
 WORD: ellis, FREQ: 3
 WORD: boyd, FREQ: 3
@@ -30,7 +28,6 @@ WORD: ile, FREQ: 3
 WORD: ilgi, FREQ: 3
 WORD: de, FREQ: 3
 WORD: bu, FREQ: 3
-WORD: the, FREQ: 2
 WORD: bob, FREQ: 2
 WORD: gunton, FREQ: 2
 WORD: clancy, FREQ: 2
@@ -42,7 +39,6 @@ WORD: bellows, FREQ: 2
 WORD: james, FREQ: 2
 WORD: whitmore, FREQ: 2
 WORD: eylül, FREQ: 2
-WORD: b, FREQ: 2
 WORD: mart, FREQ: 2
 WORD: süre, FREQ: 2
 WORD: abd, FREQ: 2
@@ -95,8 +91,6 @@ WORD: entertainment, FREQ: 1
 WORD: çýkýþ, FREQ: 1
 WORD: tarih, FREQ: 1
 WORD: ler, FREQ: 1
-WORD: i, FREQ: 1
-WORD: d, FREQ: 1
 WORD: türkiye, FREQ: 1
 WORD: dk, FREQ: 1
 WORD: ülke, FREQ: 1
@@ -212,7 +206,6 @@ WORD: shawsank, FREQ: 1
 WORD: dayak, FREQ: 1
 WORD: iþkence, FREQ: 1
 WORD: tecavüz, FREQ: 1
-WORD: her, FREQ: 1
 WORD: türlü, FREQ: 1
 WORD: durum, FREQ: 1
 WORD: yaþanmaktadýr, FREQ: 1

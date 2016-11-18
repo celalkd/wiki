@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.jsoup.Jsoup;
@@ -14,6 +15,8 @@ public class FileIO {
 	Scanner scanner;
 	String content;
 	
+	ArrayList<String> stopWordListENG = new ArrayList<>();
+	ArrayList<String> stopWordListTR = new ArrayList<>();
 	//CONSTRUCTORS
 	private FileIO(){
 		
@@ -23,9 +26,32 @@ public class FileIO {
 	}
 	
 	//FUNCTIONS
+	public void createStopWordList(){
+		
+		//inglizce ve türkçe etkisiz kelimeleri dosyadan okuyup diziye yazan method
+		String content;
+		try {
+			content = this.fileToString("stopWordListENG");
+			String[] blocks = content.split(("\\r?\\n?\\s+"));
+			for(int i=0; i<blocks.length; i++){	
+				stopWordListENG.add(blocks[i]);
+			}
+			content = this.fileToString("stopWordListTR");
+			blocks = content.split(("\\r?\\n?\\s+"));
+			for(int i=0; i<blocks.length; i++){	
+				stopWordListTR.add(blocks[i]);
+			}
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	public void openandWritetoFile() throws IOException{
 		
-		File file = new File("C:\\Users\\celalkd\\workspace_\\WikiMining\\resources\\AllMovies.txt");
+		File file = new File("C:\\Users\\celalkd\\workspace_\\WikiMiningMaven\\resources\\AllMovies.txt");
 		file.createNewFile();
 		FileWriter fos= new FileWriter(file);
 		for(Movie item: Archive.getArchive().getMovieArchive()){
@@ -37,8 +63,8 @@ public class FileIO {
 	}
 	public void writeWordsAndFreqsToFile(String langFolder) throws IOException{
 		for(Movie item: Archive.getArchive().getMovieArchive()){
-			File file_freq = new File("C:\\Users\\celalkd\\workspace_\\WikiMining\\resources\\"+langFolder+"\\FREQ\\"+item.getInfoBox().getTitle()+".txt");
-			File file_context = new File("C:\\Users\\celalkd\\workspace_\\WikiMining\\resources\\"+langFolder+"\\CONTEXT\\"+item.getInfoBox().getTitle()+".txt");
+			File file_freq = new File("C:\\Users\\celalkd\\workspace_\\WikiMiningMaven\\resources\\"+langFolder+"\\FREQ\\"+item.getInfoBox().getTitle()+".txt");
+			File file_context = new File("C:\\Users\\celalkd\\workspace_\\WikiMiningMaven\\resources\\"+langFolder+"\\CONTEXT\\"+item.getInfoBox().getTitle()+".txt");
 
 			file_freq.createNewFile();
 			file_context.createNewFile();
@@ -66,17 +92,6 @@ public class FileIO {
 		}
 		
 	}
-	public void appendtoFile(String str) throws IOException{
-		File file = new File("C:\\Users\\celalkd\\workspace_\\WikiMining\\resources\\AllMovies.txt");
-		try{
-			FileWriter fw = new FileWriter(file);	
-		    BufferedWriter bw = new BufferedWriter(fw);
-		    PrintWriter out = new PrintWriter(bw);
-		    out.println(str);
-		}catch (IOException e) {
-		    //exception handling left as an exercise for the reader
-		}		
-	}
 	public String fileToString(String fileName) throws IOException{
 		/*
 		 * dosya adýný alýp, bu dosyanýn içerðini string olarak döndüren method
@@ -85,7 +100,7 @@ public class FileIO {
 	    String content = null;
 	    
 	    try {
-	         fileReader = new FileReader("C:\\Users\\celalkd\\workspace_\\WikiMining\\resources\\"+fileName+".txt");
+	         fileReader = new FileReader("C:\\Users\\celalkd\\workspace_\\WikiMiningMaven\\resources\\"+fileName+".txt");
 	         int c;	         
 	         while ((c = fileReader.read()) != -1) {	        	 
 	        	 if(content==null){

@@ -12,13 +12,22 @@ public class Main {
 		 */
 		Archive archieve = Archive.getArchive();
 		FileIO fileIO = FileIO.getFileIO();
+		MongoDB mongoDB = MongoDB.getMongoDB();
 		
-		archieve.getMovies(fileIO.fileToString("top250"));
-		archieve.checkAndPrintMovies(fileIO.fileToString("top250_info"));
+		fileIO.createStopWordList();//stopwordlisteleri oluþturulur
+		
+		archieve.getMovies(fileIO.fileToString("top250"));//tüm movie objeleri tüm fieldlarý dolu þekilde kaydedilir
+		archieve.checkAndPrintMovies(fileIO.fileToString("top250_info"));//imdb bilgileri ile kýyaslanýp onaylanýr
 		report(); fileIO.openandWritetoFile();		
 		
-		archieve.writeMovieWordsToFile("TR");
+		archieve.writeMovieWordsToFile("TR");//türkçe ve inglizce kelimeler dosyaya kaydedilir(movie'nin kelime listesine)
 		archieve.writeMovieWordsToFile("ENG");
+		
+		mongoDB.createAndInsertMovieDocs(archieve.getMovieArchive());//allmovies to mongo
+		mongoDB.createAndInsertContextDocs(archieve.getMovieArchive(), "ENG");//eng context to mongo
+		mongoDB.createAndInsertContextDocs(archieve.getMovieArchive(), "TR");//tr context to mongo
+		
+		
 		
 	}
 	public static void report(){

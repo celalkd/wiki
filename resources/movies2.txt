@@ -1,0 +1,10 @@
+1|The_Lion_King|1994|http://us.imdb.com/M/title-exact?Jeffrey%20(1995)|6.7
+2|Pulp_Fiction|1994|http://us.imdb.com/M/title-exact?Judge%20Dredd%20(1995)|5.4
+3|Forrest_Gump|1994|http://us.imdb.com/M/title-exact?Mighty%20Morphin%20Power%20Rangers:%20The%20Movie%20(1995)|5.0
+4|Inglourious_Basterds|2009|http://us.imdb.com/M/title-exact?Showgirls%20(1995)|4.6
+5|Iron_Man|2008|http://us.imdb.com/M/title-exact?Houseguest%20(1994)|EMPTY
+6|The_Green Mile|19994|http://us.imdb.com/M/title-exact?Heavyweights%20(1994)|EMPTY
+7|Iron_Man_2|2010|http://us.imdb.com/M/title-exact?Houseguest%20(1994)|EMPTY
+8|G.O.R.A|2004|http://us.imdb.com/M/title-exact?Houseguest%20(1994)|EMPTY
+9|Mary_and_Max|2009|http://us.imdb.com/M/title-exact?Houseguest%20(1994)|EMPTY
+10|The_Hunt|2012|http://us.imdb.com/M/title-exact?Houseguest%20(1994)|EMPTY
