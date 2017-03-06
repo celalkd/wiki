@@ -1,3 +1,4 @@
+﻿a
 a
 acaba
 altı
@@ -97,8 +98,15 @@ hiçbiri
 hiçbirine
 hiçbirini
 ı
+ın
+ının
+ına
 i
 için
+için
+in
+ine
+inin
 içinde
 iki
 ile
@@ -139,6 +147,9 @@ nesi
 neyse
 niçin
 niye
+nun
+nın
+nin
 o
 on
 ona
@@ -198,6 +209,9 @@ tamam
 tüm
 tümü
 u
+un
+unun
+una
 ü
 üç
 üzere

@@ -41,49 +41,29 @@ public class Movie {
 	}	
 	
 	//FUNCTIONS
-	public String findContext(String url, String language) throws IOException{
-		//verilen url'ye göre context bulan method(url movie objesine ait wiki ve ya viki)
-		//archivede movieArchive listesindeki her bir movienin body contextini almak için kullanýcak
-		Document doc = Jsoup.connect(url).get();
-		String textBody = doc.select("div#mw-content-text").text();
-		//verilen dil seçeneðine göre movie'ye ait context fiedlarýný seçiyor(eng veya tr)
-		if(language.equals("TR"))
-			this.setContext_TR(textBody);
-		
-		else if(language.equals("ENG"))
-			this.setContext_ENG(textBody);
-		return textBody;
-	}
-	public void splitContext(String textBody, ArrayList<Word> wordList){
-		//verilen contexti kelimelere ayýran method	
-		//archivede movieArchive listesindeki her bir movienin body contextini kelimelerini ayýrmak için
-		String[] words = textBody.split("[\\p{Punct}\\s]+");
-		for(String w : words){
-			if(Character.isLetter(w.charAt(0)) ){//word sayý deðil ise
-				//eldeki kelimeyi arama iþlemi aþaðýdaki method ile yapýlacak
-				searchWordAndIncFreq(w,wordList);				
-			}
+	public void setActiveWikiLink(){
+		/*
+		 * _(YIL_film), _(film) ve uzantýsýz linkleri 404 hatasý almayana kadar dener, 
+		 * eriþilebilen linki uzantýsyla birlikte movie'nin wikiURL_EN fieldýna set eder.
+		 */
+		FileIO fileIO = FileIO.getFileIO();
+		String activeLink = null;
+		System.out.println(this.id+")"+this.wikiURL_EN);
+		if(fileIO.check404(this.wikiURL_EN+"_("+this.year+"_film)")){
+			activeLink = this.wikiURL_EN+"_("+this.year+"_film)";
 		}
-		Collections.sort(wordList, new CustomComparator());
-	}
-	public void searchWordAndIncFreq(String str, ArrayList<Word> wordList){
-		//tüm kelimeler küçük harfe çevrilir(Movie ve movie kelimeleri frklý sayýlmasýn diye)
-		str = str.toLowerCase();
-		//inglizce stopwordlistte varsa dikkate almamamýz için if kontrollü
-		if(FileIO.getFileIO().stopWordListENG.contains(str)==false)
-		{			
-			boolean find=false;
-	        for(Word obj: wordList){//methoda gönderilen wordListte var mý kontrolü(eng ve ya tr wordlist gönerilir)
-	            if(obj.getWord().equals(str)){//bu word varsa freq arttýr
-	                obj.incFreq();
-	                find=true;
-	            }
-	        }
-	        if(!find){//bu word bulunamadýysa
-	            Word obj = new Word(str);//yeni yarat(fre1=1 yapýldý constructorda)
-	            wordList.add(obj);
-	        }
+		else if(fileIO.check404(this.wikiURL_EN+"_(film)")){
+			activeLink = this.wikiURL_EN+"_(film)";
 		}
+		else if(fileIO.check404(this.wikiURL_EN)){
+			activeLink = this.wikiURL_EN;
+		}
+		else {
+			activeLink = "INGLIZCE KAYNAK BULUNAMADI";
+			setNoAnyLangSource(getNoAnyLangSource() + 1);//ingilizce kaynak yoksa türkçe kaynak da çýkmayacaðýný kabul ediyoruz
+		}
+		System.out.println(" *active URL: "+activeLink);
+		this.setWikiURL_EN(activeLink);
 	}
 	
 	public void setActiveVikiURL(){
@@ -108,30 +88,78 @@ public class Movie {
 			
 		}    	
 	}
-	public void setActiveWikiLink(){
-		/*
-		 * _(YIL_film), _(film) ve uzantýsýz linkleri 404 hatasý almayana kadar dener, 
-		 * eriþilebilen linki uzantýsyla birlikte movie'nin wikiURL_EN fieldýna set eder.
-		 */
-		FileIO fileIO = FileIO.getFileIO();
-		String activeLink = null;
-		System.out.println(this.id+")"+this.wikiURL_EN);
-		if(fileIO.check404(this.wikiURL_EN+"_("+this.year+"_film)")){
-			activeLink = this.wikiURL_EN+"_("+this.year+"_film)";
-		}
-		else if(fileIO.check404(this.wikiURL_EN+"_(film)")){
-			activeLink = this.wikiURL_EN+"_(film)";
-		}
-		else if(fileIO.check404(this.wikiURL_EN)){
-			activeLink = this.wikiURL_EN;
-		}
-		else {
-			activeLink = "INGLIZCE KAYNAK BULUNAMADI";
-			setNoAnyLangSource(getNoAnyLangSource() + 1);
-		}
-		System.out.println(" *active URL: "+activeLink);
-		this.setWikiURL_EN(activeLink);
+	
+	public String findContext(String url, String language) throws IOException{
+		//verilen url'ye göre context bulan method(url movie objesine ait wiki ve ya viki)
+		//archivede movieArchive listesindeki her bir movienin body contextini almak için kullanýcak
+		Document doc = Jsoup.connect(url).get();
+		
+		//wikipedia'da içeriði çekmek için gerekli elementin tagi "div#mw-content-text"
+		String textBody = doc.select("div#mw-content-text").text();
+		
+		//verilen dil seçeneðine göre movie'ye ait context fiedlarýný seçiyor(eng veya tr)
+		if(language.equals("TR"))
+			//eðer sayfanýn dili türkçe ise setContent_TR methodu ile context_TR fieldýna set edilir.
+			this.setContext_TR(textBody);
+		
+		else if(language.equals("ENG"))
+			//eðer sayfanýn dili ingilizce ise setContent_ENG methodu ile context_ENG fieldýna set edilir.
+			this.setContext_ENG(textBody);
+		
+		//içeriðin yine dile göre dosyaya yazýlmasý için textBody deðiþkeni return edilir
+		return textBody;
 	}
+	
+	public void splitContext(String textBody, ArrayList<Word> wordList, String language){
+		//verilen contexti(Wikipedia sayfasýnýn tüm içeriði) kelimelere ayýran method	
+		//archivede movieArchive listesindeki her bir movienin body contextini kelimelerini ayýrmak için
+		//parametrelerdeki ArrayList'in kaynaðý bu
+		
+		String[] words = textBody.split("[\\p{Punct}\\s]+");//ayýrma koþulu
+		
+		for(String word_str : words){
+			if(Character.isLetter(word_str.charAt(0)) ){//eldeki string bir harfle baþlýyorsa yani sayý deðil ise
+				
+				//eldeki kelimeyi arama iþlemi aþaðýdaki method ile yapýlacak
+				//daha önce bu kelimeyi kaydetmiþ miyiz?
+				//kaydetmiþsek frekansý 1 arttýrýlýr.
+				//kaydetmemiþsek
+				searchWordAndIncFreq(word_str,wordList,language);				
+			}
+		}
+		Collections.sort(wordList, new CustomComparator());//alfabetik sýralama yapmak için çalýþan comparator
+	}
+	public void searchWordAndIncFreq(String str, ArrayList<Word> wordList, String language){
+		
+		//tüm kelimeler küçük harfe çevrilir(örneðin Movie ve movie kelimeleri farklý kabul edilmemeli)
+		str = str.toLowerCase();
+		
+		
+		ArrayList<String> selectedLangStopWordList = null;
+		
+		if(language.equals("ENG"))
+			selectedLangStopWordList = FileIO.getFileIO().stopWordListENG;
+		else if (language.equals("TR"))
+			selectedLangStopWordList = FileIO.getFileIO().stopWordListTR;		
+		
+		if(selectedLangStopWordList.contains(str)==false)//eðer stop-word deðilse kelime deðerlenirilmeli
+		{			
+			boolean find=false;
+	        for(Word a_word: wordList){//methoda gönderilen string yine Methoda gönderilen wordList'te aranýr
+	            if(a_word.getWord().equals(str)){//bu kelime varsa freq arttýr
+	            	a_word.incFreq();
+	                find=true;
+	            }
+	        }
+	        if(!find){//bu word bulunamadýysa
+	            Word a_word = new Word(str);//yeni yarat(freq=1 yapýldý constructorda)
+	            wordList.add(a_word);
+	        }
+		}
+	}
+	
+	
+	
 	@Override
 	public String toString(){		
 		return "\n"+this.id+")"+this.infoBox.getTitle()+"("+this.year+")"+this.infoBox.toString()+

@@ -128,6 +128,8 @@ public class InfoBox {
 		return str;
 	}
 	public boolean isEqual(InfoBox other){
+		int mismatch=0;
+		
 		if(!this.title.equals(other.getTitle())){
 			System.out.println("Mismatch: "+this.title+"!="+other.getTitle());
 			return false;
@@ -137,13 +139,30 @@ public class InfoBox {
 			System.out.println("Dismatch: "+this.director+"!="+other.getDirector());
 			return false;
 		}
-		for(String star : other.getStarring()){
+		/*
+		 * for(String star : other.getStarring()){
 			//System.out.println(star);
+			
+			
 			if(!this.starring.contains(star)){
 				System.out.println("Dismatch: '"+star+"'"+" Does Not Exist In the Starring List");
 				return false;
 			}
-		}		
+		}	
+		 */
+		
+		//aktörlerin en az %50'sinin eþleþmesi gerekiyor.
+		for(String star : other.getStarring()){
+			//System.out.println(star);
+			if(!this.starring.contains(star)){
+				System.out.println("Mismatch: '"+star+"'"+" Does Not Exist In the Starring List");
+				mismatch++;
+			}
+			
+		}
+		double starringCount = this.starring.size();
+		if(mismatch!=0 && mismatch/starringCount<0.6)
+			return false;
 		return true;
 	}
 	

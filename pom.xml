@@ -28,5 +28,15 @@
         <artifactId>mongodb-driver</artifactId>
         <version>3.3.0</version>
     </dependency>
+    <dependency>
+	    <groupId>redis.clients</groupId>
+	    <artifactId>jedis</artifactId>
+	    <version>2.9.0</version>
+	</dependency>
+	<dependency>
+		<groupId>org.neo4j.driver</groupId>
+		<artifactId>neo4j-java-driver</artifactId>
+		<version>1.1.2</version>
+	</dependency>
   </dependencies>
 </project>

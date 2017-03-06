@@ -6,6 +6,6 @@ public class CustomComparator implements Comparator<Word> {
         Integer f1 = o1.getFreq();
         Integer f2 = o2.getFreq();
         
-        return f2.compareTo(f1);
+        return f1.compareTo(f2);
     }
 }

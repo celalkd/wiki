@@ -4,7 +4,7 @@ import com.mongodb.*;
 public class MongoDB {
 	private static MongoDB  mongodb   = new MongoDB();
 	private ArrayList<BasicDBObject> docList ;
-	private int id;
+	//private int id;
 	private MongoClient mongoClient ;	 
 	private DB db ;
 	private DBCollection collection;	
@@ -28,21 +28,23 @@ public class MongoDB {
 			for(String actor : m.getInfoBox().getStarring()){
 				starringList.add(actor);
 			}
-			movieDoc.append("_id",id)
+			movieDoc.append("_id",m.getId())
 			 .append("title", m.getInfoBox().getTitle())
 			 .append("director", m.getInfoBox().getDirector())
 			 .append("year", m.getYear())
 			 .append("wikiURL", m.getWikiURL_EN() )
 			 .append("vikiURL", m.getVikiURL_TR())
-			 .append("starring", starringList);
+			 .append("starring", starringList)
+			 .append("context_ENG", m.getContext_ENG())
+			 .append("context_TR", m.getContext_TR());
 			//doc'a movienin fieldlarý eklenir
 			
 			docList.add(movieDoc);	//boþ doc listesine eklenir		
-			this.id++;//id arttýrýlýr
+			//this.id++;//id arttýrýlýr
 		}		
 		this.collection.insert(docList);//doldurulan doc listesi collectiona insert edilir
 	}
-	public void createAndInsertContextDocs(ArrayList<Movie> movieArchieve,String language){
+	/*public void createAndInsertContextDocs(ArrayList<Movie> movieArchieve,String language){
 		//ENG ve TR dosyalarý içindeki context dökümananlarýný mnngodbye geçirir
 		
 		//kullanýlacak collection dil seçeneðiyle belirlenip inite gönderilir	
@@ -63,13 +65,13 @@ public class MongoDB {
 		}		
 		this.collection.insert(docList);//dolan liste collectiona insert edilir
 		
-	}
+	}*/
 	public void init(String collectionName){
 		this.mongoClient = new MongoClient( "localhost" , 27017 );	 //porta baðlanýlýr
 		this.db = mongoClient.getDB("moviesDatabase");//database alýnýr
 		this.collection = db.getCollectionFromString(collectionName);//collection alýnýr
 		this.docList = new ArrayList<BasicDBObject>();//boþ doc listesi yaratýlýr
-		this.id=0;//id sýnýflanýr
+		//this.id=0;//id sýnýflanýr
 		this.collection.remove(new BasicDBObject());//coleectioný temizlemek için
 	}
 }
