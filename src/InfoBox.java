@@ -138,31 +138,20 @@ public class InfoBox {
 		if(!this.director.equals(other.getDirector())){
 			System.out.println("Dismatch: "+this.director+"!="+other.getDirector());
 			return false;
-		}
-		/*
-		 * for(String star : other.getStarring()){
-			//System.out.println(star);
-			
-			
-			if(!this.starring.contains(star)){
-				System.out.println("Dismatch: '"+star+"'"+" Does Not Exist In the Starring List");
-				return false;
-			}
-		}	
-		 */
+		}			
 		
-		//aktörlerin en az %50'sinin eþleþmesi gerekiyor.
 		for(String star : other.getStarring()){
-			//System.out.println(star);
 			if(!this.starring.contains(star)){
 				System.out.println("Mismatch: '"+star+"'"+" Does Not Exist In the Starring List");
 				mismatch++;
-			}
-			
+			}			
 		}
 		double starringCount = this.starring.size();
-		if(mismatch!=0 && mismatch/starringCount<0.6)
+		double mismatchRate = (mismatch/starringCount)*100;
+		if(mismatch!=0 && mismatchRate>60){//en az %40'ý eþleþmiþ olmalý
+			System.out.println("rate: "+mismatchRate);
 			return false;
+		}
 		return true;
 	}
 	

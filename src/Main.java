@@ -16,7 +16,7 @@ public class Main {
 		 * Arhieve ve FileIO singleton olduðu için yeni nesne yaratýyorum
 		 * sýnýfýn içinde olan static nesneyi alýp kullanýyoruz
 		 */
-		Archive archieve = Archive.getArchive();
+		/*Archive archieve = Archive.getArchive();
 		FileIO fileIO = FileIO.getFileIO();
 		MongoDB mongoDB = MongoDB.getMongoDB();
 		Neo4j neo4j = new Neo4j();
@@ -24,21 +24,44 @@ public class Main {
 		
 		fileIO.createStopWordList();//ENG ve TR stopwordlisteleri oluþturulur fileIO içinde dizide saklanýr
 		
-		archieve.getMovies(fileIO.fileToString("top250"));//tüm movie objeleri tüm fieldlarý dolu þekilde kaydedilir
-		archieve.checkAndPrintMovies(fileIO.fileToString("top250_info"));//imdb bilgileri ile kýyaslanýp onaylanýr
-		report(); fileIO.openandWritetoFile();		
+		archieve.getMovies(fileIO.fileToString("top250_10film"));//tüm movie objeleri tüm fieldlarý dolu þekilde kaydedilir
+		archieve.checkMovies(fileIO.fileToString("top250_info_10film"));//imdb bilgileri ile kýyaslanýp onaylanýr
+		report();
+			    
 		
-		//archieve.writeMovieWordsToFile("TR");//türkçe ve inglizce kelimeler dosyaya kaydedilir(movie'nin kelime listesine)
-		//archieve.writeMovieWordsToFile("ENG");
+		fileIO.openandWritetoFile();		
 		
-		//mongoDB.createAndInsertMovieDocs(archieve.getMovieArchive());//allmovies to mongo
+		archieve.writeWordsToFile("TR");//türkçe ve inglizce kelimeler dosyaya kaydedilir(movie'nin kelime listesine)
+		archieve.writeWordsToFile("ENG");
+		
+		
 		//mongoDB.createAndInsertContextDocs(archieve.getMovieArchive(), "ENG");//eng context to mongo
 		//mongoDB.createAndInsertContextDocs(archieve.getMovieArchive(), "TR");//tr context to mongo
-		//archieve.createMovieWordsStore();
 		
-		neo4j.createDirectedByRelationship(archieve.getMovieArchive());
-		neo4j.createFilmedRelationship(archieve.getMovieArchive());
+		mongoDB.createAndInsertMovieDocs(archieve.getMovieArchive());//mongodb		
+		archieve.createWordRedis();//redis
+		//neo4j.createGraph(archieve.getMovieArchive());//neo4j
+		*/
 		
+		ArrayList<String> starring = new ArrayList<>();
+		ArrayList<String> genre = new ArrayList<>();
+		
+		
+		starring.add("Al Pacino");
+		starring.add("Diane Keaton");
+		starring.add("Robert De Niro");
+		//starring.add("Marlon Brando");
+		//starring.add("Morgan Freeman");
+		//starring.add("Tim Robbins");
+		
+		genre.add("Crime");
+		genre.add("Drama");
+		//genre.add("Action");
+		//genre.add("History");
+		
+		MongoDB mongoDB = MongoDB.getMongoDB();
+		mongoDB.query_with_tags(null, "1950","2010", starring, genre, 8.5);
+		mongoDB.query_with_title("Pulp Fiction");
 	}
 		
 	

@@ -76,7 +76,6 @@ WORD: ray, FREQ: 1
 WORD: üzerinde, FREQ: 1
 WORD: gördü, FREQ: 1
 WORD: enstitüsü, FREQ: 1
-WORD: nün, FREQ: 1
 WORD: hazýrladýðý, FREQ: 1
 WORD: afi, FREQ: 1
 WORD: nýn, FREQ: 1
@@ -235,18 +234,16 @@ WORD: dünyaya, FREQ: 1
 WORD: saðlamayaz, FREQ: 1
 WORD: asarak, FREQ: 1
 WORD: figaro, FREQ: 1
-WORD: eviliðinin, FREQ: 1
+WORD: düðünü, FREQ: 1
 WORD: kaydýný, FREQ: 1
 WORD: içeren, FREQ: 1
 WORD: kütüphane, FREQ: 1
 WORD: baðýþý, FREQ: 1
 WORD: alýr, FREQ: 1
-WORD: bütüm, FREQ: 1
 WORD: açýk, FREQ: 1
 WORD: þarkýnýn, FREQ: 1
 WORD: bölümünü, FREQ: 1
 WORD: çalar, FREQ: 1
-WORD: buda, FREQ: 1
 WORD: tek, FREQ: 1
 WORD: kiþilik, FREQ: 1
 WORD: gönderilmesine, FREQ: 1
@@ -557,6 +554,7 @@ WORD: tarafýndan, FREQ: 2
 WORD: aldý, FREQ: 2
 WORD: aday, FREQ: 2
 WORD: gösterildi, FREQ: 2
+WORD: nün, FREQ: 2
 WORD: dahil, FREQ: 2
 WORD: dan, FREQ: 2
 WORD: kiþinin, FREQ: 2
@@ -665,8 +663,8 @@ WORD: iyi, FREQ: 6
 WORD: olan, FREQ: 6
 WORD: olduðunu, FREQ: 6
 WORD: para, FREQ: 7
-WORD: bütün, FREQ: 7
 WORD: norton, FREQ: 7
+WORD: bütün, FREQ: 8
 WORD: film, FREQ: 10
 WORD: deðiþtir, FREQ: 10
 WORD: için, FREQ: 10

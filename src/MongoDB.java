@@ -17,30 +17,92 @@ public class MongoDB {
 		return mongodb;
 	}
 	
-	public void createAndInsertMovieDocs(ArrayList<Movie> movieArchieve){
-		//allmovies dokümanýný mongodb'ye formatlamak amacýyla yazýlan method
-		init("moviesCollection");		//kullanýlacak collection init gönderilir	
+	public void query_with_title(String title){
 		
+		DBCursor cursor = collection.find(new BasicDBObject("title", title));
 		
-		for(Movie m : movieArchieve){//her bir movie için boþ bir mondogb doc yaratýlýr
-			BasicDBObject movieDoc = new BasicDBObject();
-			ArrayList<String> starringList = new ArrayList<String>();
-			for(String actor : m.getInfoBox().getStarring()){
-				starringList.add(actor);
+		for(DBObject result : cursor){
+			printResult(result);
+		}
+	}
+	public void query_with_tags(String director, String yearMin, String yearMax, ArrayList<String> starring, ArrayList<String> genre, double rating ){
+		
+		BasicDBObject query = new BasicDBObject();
+		ArrayList<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+		
+		if(director!=null){
+			query.append("director", director);
+		}
+		
+		if(yearMin!=null && yearMax==null){
+			int yearMinInt = Integer.parseInt(yearMin);
+			query.append("year", new BasicDBObject("$gte", yearMinInt));
+		}
+		else if(yearMin==null && yearMax!=null){
+			int yearMaxInt = Integer.parseInt(yearMax);				
+			query.append("year", new BasicDBObject("$lte", yearMaxInt));
+		}
+		else if(yearMin!=null && yearMax!=null){
+			int yearMinInt = Integer.parseInt(yearMin);
+			int yearMaxInt = Integer.parseInt(yearMax);	
+
+			obj.add(new BasicDBObject("year",new BasicDBObject("$gte", yearMinInt)));
+			obj.add(new BasicDBObject("year",new BasicDBObject("$lte", yearMaxInt)));
+			query.append("$and", obj);
+		}				
+		
+		if(starring!=null){
+			for(String star : starring){
+				obj.add(new BasicDBObject("starring", star));
+				query.append("$and", obj);
+			}			
+		}
+		if(genre!=null){				
+			for(String g : genre){
+				obj.add(new BasicDBObject("genre", g));
+				query.append("$and", obj);
 			}
-			movieDoc.append("_id",m.getId())
-			 .append("title", m.getInfoBox().getTitle())
-			 .append("director", m.getInfoBox().getDirector())
-			 .append("year", m.getYear())
-			 .append("wikiURL", m.getWikiURL_EN() )
-			 .append("vikiURL", m.getVikiURL_TR())
-			 .append("starring", starringList)
-			 .append("context_ENG", m.getContext_ENG())
-			 .append("context_TR", m.getContext_TR());
-			//doc'a movienin fieldlarý eklenir
-			
-			docList.add(movieDoc);	//boþ doc listesine eklenir		
-			//this.id++;//id arttýrýlýr
+		}
+		
+		if(rating>=0 && rating<=10.0){
+			query.append("rating",  new BasicDBObject("$gte", rating));
+		}
+		
+		System.out.println(query.toJson());
+		DBCursor cursor = collection.find(query);		
+		for(DBObject result : cursor){			
+			System.out.println(result.get("title"));
+			printResult(result);
+		}	
+		
+	}
+	public void printResult(DBObject result){
+		System.out.println("Directed By: " + result.get("director"));
+		System.out.println("Starring: " + result.get("starring"));
+		System.out.println("Year: " + result.get("year"));
+		System.out.println("Genre: " + result.get("genre"));
+		System.out.println("Rating: " + result.get("rating"));
+	}
+	
+	public void createAndInsertMovieDocs(ArrayList<Movie> movieArchieve){
+		init("moviesCollection");					
+		for(Movie m : movieArchieve){
+			if(m.getVerified()){				
+				System.out.println(m.getInfoBox().getTitle()+" Mongodb");				
+				BasicDBObject movieDoc = new BasicDBObject();				
+				movieDoc.append("_id",m.getId())
+				 .append("title", m.getInfoBox().getTitle())
+				 .append("director", m.getInfoBox().getDirector())
+				 .append("year", m.getYear())
+				 .append("starring", m.getInfoBox().getStarring())
+				 .append("genre", m.getGenre())
+				 .append("rating", m.getRating())
+				 .append("wikiURL", m.getWikiURL_EN())
+				 .append("vikiURL", m.getVikiURL_TR())
+				 .append("context_ENG", m.getContext_ENG())
+				 .append("context_TR", m.getContext_TR());	
+				docList.add(movieDoc);
+			}
 		}		
 		this.collection.insert(docList);//doldurulan doc listesi collectiona insert edilir
 	}
@@ -71,7 +133,6 @@ public class MongoDB {
 		this.db = mongoClient.getDB("moviesDatabase");//database alýnýr
 		this.collection = db.getCollectionFromString(collectionName);//collection alýnýr
 		this.docList = new ArrayList<BasicDBObject>();//boþ doc listesi yaratýlýr
-		//this.id=0;//id sýnýflanýr
-		this.collection.remove(new BasicDBObject());//coleectioný temizlemek için
+		this.collection.remove(new BasicDBObject());//collectioný temizlemek için
 	}
 }

@@ -14,7 +14,7 @@ WORD: running, FREQ: 1
 WORD: language, FREQ: 1
 WORD: english, FREQ: 1
 WORD: budget, FREQ: 1
-WORD: thriller, FREQ: 1
+WORD: epic, FREQ: 1
 WORD: ensemble, FREQ: 1
 WORD: dismantle, FREQ: 1
 WORD: menaced, FREQ: 1
@@ -3054,6 +3054,7 @@ WORD: see, FREQ: 10
 WORD: goyer, FREQ: 10
 WORD: dc, FREQ: 10
 WORD: featuring, FREQ: 10
+WORD: crime, FREQ: 10
 WORD: killing, FREQ: 10
 WORD: mob, FREQ: 10
 WORD: says, FREQ: 10
@@ -3067,7 +3068,6 @@ WORD: story, FREQ: 11
 WORD: based, FREQ: 11
 WORD: comic, FREQ: 11
 WORD: oldman, FREQ: 11
-WORD: crime, FREQ: 11
 WORD: including, FREQ: 11
 WORD: used, FREQ: 11
 WORD: records, FREQ: 11

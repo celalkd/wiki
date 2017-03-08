@@ -8,6 +8,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.junit.validator.PublicClassValidator;
 
 public class Movie {
 	
@@ -16,9 +17,11 @@ public class Movie {
 	static float noAnyLangSource;		
 	
 	private int id;
+	private ArrayList<String> genre = new ArrayList<>();
+	private double rating;
 	private String vikiURL_TR;
 	private String wikiURL_EN;
-	private String year;
+	private int year;
 	private String context_TR;
 	private String context_ENG;
 
@@ -31,9 +34,9 @@ public class Movie {
 	
 	//CONSTRUCTORS
 	public Movie(){
-		setVikiURL_TR("TÜRKÇE KAYNAK BULUNAMADI");//türkçe kaynak bulunamazsa bu deðer böyle kalacaktýr.
+		setVikiURL_TR("Kaynak Bulunamadý");//türkçe kaynak bulunamazsa bu deðer böyle kalacaktýr.
 	}
-	public Movie(int id, String wikiURL_EN, String vikiURL_TR, String year){
+	public Movie(int id, String wikiURL_EN, String vikiURL_TR, int year){
 		setId(id);
 		setWikiURL_EN(wikiURL_EN);
 		setVikiURL_TR(vikiURL_TR);
@@ -46,9 +49,10 @@ public class Movie {
 		 * _(YIL_film), _(film) ve uzantýsýz linkleri 404 hatasý almayana kadar dener, 
 		 * eriþilebilen linki uzantýsyla birlikte movie'nin wikiURL_EN fieldýna set eder.
 		 */
+		
 		FileIO fileIO = FileIO.getFileIO();
 		String activeLink = null;
-		System.out.println(this.id+")"+this.wikiURL_EN);
+		//System.out.println(this.id+")"+this.wikiURL_EN);
 		if(fileIO.check404(this.wikiURL_EN+"_("+this.year+"_film)")){
 			activeLink = this.wikiURL_EN+"_("+this.year+"_film)";
 		}
@@ -59,10 +63,10 @@ public class Movie {
 			activeLink = this.wikiURL_EN;
 		}
 		else {
-			activeLink = "INGLIZCE KAYNAK BULUNAMADI";
+			activeLink = "No Url Source";
 			setNoAnyLangSource(getNoAnyLangSource() + 1);//ingilizce kaynak yoksa türkçe kaynak da çýkmayacaðýný kabul ediyoruz
 		}
-		System.out.println(" *active URL: "+activeLink);
+		//System.out.println(" *active URL: "+activeLink);
 		this.setWikiURL_EN(activeLink);
 	}
 	
@@ -76,16 +80,18 @@ public class Movie {
 		Document doc = null;
 		try {
 			
-			doc = Jsoup.connect(this.getWikiURL_EN()).get();
-			Elements links = doc.select("a[href*=https://tr.");//https://tr. içeren a-href'leri bul
-	    	for(Element element : links){
-	    		this.setVikiURL_TR(element.attr("href"));//zaten 1 tane gelicek vikiURL'ye kaydet
-	    			
-	    	}
-	    	if(!this.getVikiURL_TR().equals("TÜRKÇE KAYNAK BULUNAMADI"))
-	    		setSuccess(getSuccess() + 1);
+			if(!this.getWikiURL_EN().equals("No Url Source")){
+				
+				doc = Jsoup.connect(this.getWikiURL_EN()).get();
+				Elements links = doc.select("a[href*=https://tr.");//https://tr. içeren a-href'leri bul
+		    	for(Element element : links){
+		    		this.setVikiURL_TR(element.attr("href"));//zaten 1 tane gelicek vikiURL'ye kaydet
+		    	}	
+		    	if(!this.getVikiURL_TR().equals("Kaynak Bulunamadý"))
+		    		setSuccess(getSuccess() + 1);
+	    	}	    	
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}    	
 	}
 	
@@ -129,6 +135,7 @@ public class Movie {
 		}
 		Collections.sort(wordList, new CustomComparator());//alfabetik sýralama yapmak için çalýþan comparator
 	}
+	
 	public void searchWordAndIncFreq(String str, ArrayList<Word> wordList, String language){
 		
 		//tüm kelimeler küçük harfe çevrilir(örneðin Movie ve movie kelimeleri farklý kabul edilmemeli)
@@ -158,15 +165,30 @@ public class Movie {
 		}
 	}
 	
-	
-	
-	@Override
 	public String toString(){		
-		return "\n"+this.id+")"+this.infoBox.getTitle()+"("+this.year+")"+this.infoBox.toString()+
-		("\nWiki EN: "+this.wikiURL_EN+"\nViki TR: "+this.vikiURL_TR);
+		String str = "\n"+this.id+")"+this.infoBox.getTitle()+"("+this.year+")"+this.infoBox.toString()+
+						("\nWiki EN: "+this.wikiURL_EN+"\nViki TR: "+this.vikiURL_TR+"\nRating: "+this.getRating())+"\nGenre: ";
+		for(String genre : this.getGenre()){
+			str = str + genre+", ";
+		}
+		return str;
 	}
 	
 	//GETTER-STTER METHODLARI
+
+	public ArrayList<String> getGenre() {
+		return genre;
+	}
+	public double getRating() {
+		return rating;
+	}
+	public void setGenre(ArrayList<String> genre) {
+		this.genre = genre;
+	}
+	public void setRating(double rating) {
+		this.rating = rating;
+	}
+	
 	public ArrayList<Word> getWordListTr() {
 		return wordListTr;
 	}
@@ -185,12 +207,7 @@ public class Movie {
 	public void setInfoBox(InfoBox infoBox) {
 		this.infoBox = infoBox;
 	}	
-	public String getYear() {
-		return year;
-	}
-	public void setYear(String year) {
-		this.year = year;
-	}	
+		
 	public int getId() {
 		return id;
 	}
@@ -251,6 +268,12 @@ public class Movie {
 		else if(language.equals("ENG"))
 			return context_ENG;
 		return null;
+	}
+	public int getYear() {
+		return year;
+	}
+	public void setYear(int year) {
+		this.year = year;
 	}
 	
 }

@@ -119,7 +119,7 @@ public class FileIO {
 		try {
 			setDoc(Jsoup.connect(URL).get());//404 gelirse catche düþer
 		} catch (IOException e) {
-			System.out.println(" *404: "+URL);
+			//System.out.println(" *404: "+URL);
 			return false;
 		}	
 		System.out.println(" *checked: "+URL);

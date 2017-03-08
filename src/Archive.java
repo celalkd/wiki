@@ -30,89 +30,41 @@ public class Archive {
 	//FUNCTIONS
 	
 	public void getMovies(String content) throws IOException{
-		/*
-		 * 
-		 * content stringi film künyesini tutan dosyanýn içeriðini temsil ediyor
-		 * bu dosyada künye içerikleri | ile ayrýlmýþ
-		 * bunlarý tek tek ayýrýp film adýný çekeceðiz
-		 * film adýyla da aktif wikipedia(eng) linkini arayacaðýz
-		 * eng wikipedia linkini bulduktan sonra da tr vikipedi linkini var mý bakacaðýz
-		 * 
-		 * linkler elde ediltikten sonra(eng olan asýl kaynak kabul edildi) sayfadan InfoBox'a eriþilir
-		 * InfoBox'tan elde edilen deðerler movie nesnesine verilir(Movie constructor bu iþi yapar)
-		 * 
-		 */
-		
+				
 		String[] blocks = content.split("\\||\\n");	
 		for(int i=0; i<blocks.length; i++){	
 			if(i%5 == 1){//her bir yeni title'da(5 adet blok var | ile ayrýlan)
 								
-				Movie movie = new Movie();
-				//filmin title'ýný tutan blok wikipedia linkinin sonuna eklenecek olan uzantý olacak
-				String linkExtension = blocks[i];				
-				String[] titleParts = linkExtension.split("_");
+				Movie movie = new Movie();//filmin title'ýný tutan blok wikipedia linkinin sonuna eklenecek olan uzantý olacak
+				String linkExtension = blocks[i];	
+				String year = blocks[i+1];//link extensiondan bir sonraki blok year bloðu		
 				
-				/*
-				 * gerek olmayabilir
-				 * 
-				 * String title = null;
-				for(int j=0; j<titleParts.length; j++){
-					if(title==null){
-						title=titleParts[j];
-		        	 }else title += " "+titleParts[j];
-				}
-				*
-				*/
-				
-				String year = blocks[i+1];//link extensiondan bir sonraki blok year bloðu				
-				movie.setYear(year); //year set edildi
+				movie.setYear(Integer.parseInt(year)); //year set edildi
 				movie.setId(movieArchive.size());	
 				
-				//baþlangýç ENG wiki linki
-				movie.setWikiURL_EN("https://en.wikipedia.org/wiki/"+linkExtension);
-				//aktif olan film linki bulunur
-				movie.setActiveWikiLink();
-				//aktif linkin türkçe sayfasý bulunur
-				movie.setActiveVikiURL();
 				
-				//infoBox constructorýnda linkin infoBox elementine gidilir
-				//Bu elementten filmin title'ý, yönetmeni ve oyuncularý alýnýr.
-				//yýlý zaten yola çýktýðýmýz dosyada yazdýðý için InfoBox'tan okumamýza gerek yok
+				movie.setWikiURL_EN("https://en.wikipedia.org/wiki/"+linkExtension);//baþlangýç ENG wiki linki
+				movie.setActiveWikiLink();//aktif olan film linki bulunur
+				movie.setActiveVikiURL();//aktif linkin türkçe sayfasý bulunur
+				
 				InfoBox infoBox = new InfoBox(movie.getWikiURL_EN());
-				movie.setInfoBox(infoBox);
+				movie.setInfoBox(infoBox);				
 				
-				//tüm fieldlarý doldurulan movie nesnesi movie listesine(movieArhive) eklenir
-				movieArchive.add(movie);//tüm filmler arþivlendi, indexleri sýralý
+				movieArchive.add(movie);//tüm filmler obje olarak listeye atýldý
 			}
 		}
 	}
-	public void checkAndPrintMovies(String content) throws IOException{
-		System.out.println("------------------------------------------------------------------------");
-		/*
-		 * imdb'den alýnmýþ bilgileri içeren dosya satýr satýr ayrýlýr(content bunu içeriyor)
-		 * 
-		 * top250 ve top250_info dosyalarýnda filmlerin sýrasýnýn ayný olduðu düþünürsek
-		 * arþivdeki index ile satýr indexi eþit olan filmlerin ayný olmasýný bekleriz
-		 * 
-		 * satýr atlamalarý id integerý ile String dizisinde gezerek yapýyoruz
-		 * 
-		 * her bir satýrý | delimiterýna göre bloklara ayýrýp datalarý alýyoruz
-		 * 
-		 * daha sonra bu datalarý bir infobox öðesine atýp arþivdeki filmin infoboxýyla kýyaslýyoruz
-		 * 
-		 * sonuca göre filmin onaylanmasýna karar veriyoruz
-		 * 
-		 * onay bilgisi her filmin kendisi tarafýndan saklanacak
-		 */
+	public void checkMovies(String content) throws IOException{
+				
+		Integer id_index=0;
+		String[] movieRowsIMDB = content.split("\\n");//satýrlar enter karakterine göre ayrýlýyor
 		
-		String[] movieRowsIMDB = content.split("\\n");//satýrlar enter'a göre ayrýlýyor
-		Integer id=0;
 		for(Movie movie : this.movieArchive){
-			String[] dataColumns = movieRowsIMDB[id].split("\\|");//satýrlardaki datalar | ile ayrýlýyor
+			String[] dataColumns = movieRowsIMDB[id_index].split("\\|");//satýrlardaki datalar | karakteri ile ayrýlýyor
 			InfoBox comparisonInfoBox = new InfoBox();
 			
 			for(int i=0; i<dataColumns.length; i++){			
-				switch(i%7){ //her satýrda 7 adet data bloðu var
+				switch(i%7){ //her satýrda | ile ayrýlmýþ 7 adet data bloðu var
 					case 1: 
 						String title = null;					
 						String[] titleParts = dataColumns[i].split("_");
@@ -122,70 +74,72 @@ public class Archive {
 							}else title += " "+titleParts[j];
 						}
 						comparisonInfoBox.setTitle(title);
-						//System.out.println("\n"+title);
 						break;
 					case 2:
 						String director = dataColumns[i];
 						comparisonInfoBox.setDirector(director);
-						//System.out.println(director);
 						break;
 					case 3:
 						String[] actors = dataColumns[i].split(",");//her satýrýn 3.data bloðundaki oyuncular , ile ayrýlýyor
 						ArrayList<String> starring = new ArrayList<String>();
 						for(int j=0; j< actors.length; j++){
-							//actor ekle
 							if(j!=0){//space'i almamak için substring çýkartýyoruz ilk actorden sonra
-								actors[j]=actors[j].substring(1, actors[j].length());
+								actors[j]=actors[j].substring(1, actors[j].length());//(string - 0.char)
 								starring.add(actors[j]);								
 							}
 							else starring.add(actors[j]);
-							//System.out.println(actors[j]);
 						}
 						comparisonInfoBox.setStarring(starring);
 						break;
+					case 4:
+						String[] genres = dataColumns[i].split(",");//her satýrýn 4.data bloðundaki genre , ile ayrýlýyor
+						ArrayList<String> genreList = new ArrayList<String>();
+						for(int k=0; k< genres.length; k++){
+							if(k!=0){//space'i almamak için substring çýkartýyoruz ilk genre'dan sonra
+								genres[k]=genres[k].substring(1, genres[k].length());
+								genreList.add(genres[k]);								
+							}
+							else genreList.add(genres[k]);
+						}
+						movie.setGenre(genreList);
+						break;
+					case 5:
+						double rating = Double.parseDouble(dataColumns[i]);
+						movie.setRating(rating);
 				}
 			}
-			System.out.println(movie);
 			
-			//imdb bilgileri ile vikipedia bilgileri uyuþuyor mu
-			boolean verified = movie.getInfoBox().isEqual(comparisonInfoBox);
-			movie.setVerified(verified);
-			
-			System.out.println("Verified: "+movie.getVerified());
+			boolean verified = movie.getInfoBox().isEqual(comparisonInfoBox);//yönetmen, oyucnular, title karþýlaþtýrmasý
+			movie.setVerified(verified);			
 			if(verified)
-				movie.setVerifySuccess(movie.getVerifySuccess()+1);
+				movie.setVerifySuccess(movie.getVerifySuccess()+1);	
 			
-			id++;
+			System.out.println(movie+"\nVerified: "+movie.getVerified());			
+			id_index++;
 		}
 		
 	}
-	public void writeMovieWordsToFile(String language) throws IOException{
-		
-		// movieArchive listesindeki her bir movienin body contextini alýnýt
-		//daha sonra context kelimelerini ayrýþtýrýlýr
-		//ayrýþtýrýlan kelimeler movie sýnýfnfa bir listeyde saklanýr(splitContext methodu bunu yapar)
-		//daha sonra fileIo sýnýfýnýn
+	public void writeWordsToFile(String language) throws IOException{
+		//dil seçeneðine göre ayný iþlem farklý kelime listeleri üzerinde yapýlýr
 		for(Movie movie : this.getMovieArchive()){
 			if(language.equals("TR")){
 				String textBody = movie.findContext(movie.getVikiURL_TR(),language);				
-				movie.splitContext(textBody, movie.getWordListTr(), language);
-				//splitcontext fonksiyonunda þu anda dil kontrolü eksik
-				//dil kontrolü yapýlýr stop-word list dilinin belirlenmesi lazým
-				//þu anda sadece ingilizce olan stop-wordlerin kontrolünü yapýyor
+				movie.splitContext(textBody, movie.getWordListTr(), language);				
 			}
 			else if(language.equals("ENG")){
 				String textBody = movie.findContext(movie.getWikiURL_EN(),language);
 				movie.splitContext(textBody, movie.getWordListEng(),language);
 			}
 		}
-		//en son fileIO sýnýfý methodu ile her br movienin kelime listesi dökümana yazýlýr
-		FileIO.getFileIO().writeWordsAndFreqsToFile(language);
+		FileIO.getFileIO().writeWordsAndFreqsToFile(language);//arþiv üzerinden tüm film nesneleri için
 	}
-	public void createMovieWordsStore() throws IOException{
+	public void createWordRedis() throws IOException{
 		
 		Redis redis = new Redis();
 		
 		for(Movie movie : this.getMovieArchive()){			
+			
+			System.out.println(movie.getInfoBox().getTitle()+" Redis");
 			
 			redis.jedis.select(0);
 			String textBody = movie.findContext(movie.getVikiURL_TR(),"TR");				
