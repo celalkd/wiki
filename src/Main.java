@@ -47,7 +47,7 @@ public class Main {
 		ArrayList<String> genre = new ArrayList<>();
 		
 		
-		starring.add("Al Pacino");
+		/*starring.add("Al Pacino");
 		starring.add("Diane Keaton");
 		starring.add("Robert De Niro");
 		//starring.add("Marlon Brando");
@@ -60,8 +60,14 @@ public class Main {
 		//genre.add("History");
 		
 		MongoDB mongoDB = MongoDB.getMongoDB();
+		mongoDB.init("moviesCollection");
 		mongoDB.query_with_tags(null, "1950","2010", starring, genre, 8.5);
-		mongoDB.query_with_title("Pulp Fiction");
+		mongoDB.query_with_tags("Francis Ford Coppola", null,null, null, null, 9.1);
+		mongoDB.query_with_title("Pulp Fiction");*/
+		Redis redis = new Redis();
+		redis.jedis.select(1);
+		redis.query("batman", "joker");
+		//redis.deneme();
 	}
 		
 	

@@ -68,10 +68,10 @@ public class MongoDB {
 			query.append("rating",  new BasicDBObject("$gte", rating));
 		}
 		
-		System.out.println(query.toJson());
+		System.out.print("\nQUERY: "+query.toJson()+"\nRESULT: ");
 		DBCursor cursor = collection.find(query);		
 		for(DBObject result : cursor){			
-			System.out.println(result.get("title"));
+			System.out.println("\n"+result.get("title"));
 			printResult(result);
 		}	
 		
@@ -133,6 +133,6 @@ public class MongoDB {
 		this.db = mongoClient.getDB("moviesDatabase");//database alýnýr
 		this.collection = db.getCollectionFromString(collectionName);//collection alýnýr
 		this.docList = new ArrayList<BasicDBObject>();//boþ doc listesi yaratýlýr
-		this.collection.remove(new BasicDBObject());//collectioný temizlemek için
+		//this.collection.remove(new BasicDBObject());//collectioný temizlemek için
 	}
 }

@@ -7,6 +7,9 @@ public class Word{
 		setWord(word);
 		setFreq(1);
 	}	
+	public Word(){
+		
+	}
 	public String getWord() {
 		return this.word;
 	}
