@@ -133,9 +133,11 @@ public class Archive {
 		}
 		FileIO.getFileIO().writeWordsAndFreqsToFile(language);//arþiv üzerinden tüm film nesneleri için
 	}
-	public void createWordRedis() throws IOException{
+	/*public void createWordRedis() throws IOException{
 		
 		Redis redis = new Redis();
+		redis.jedis.flushAll();
+		System.out.println("f");
 		
 		for(Movie movie : this.getMovieArchive()){			
 			
@@ -147,11 +149,12 @@ public class Archive {
 			redis.createWordFreqStore(movie, movie.getWordListTr());	
 			
 			redis.jedis.select(1);
+			
 			textBody = movie.findContext(movie.getWikiURL_EN(),"ENG");
 			movie.splitContext(textBody, movie.getWordListEng(),"ENG");	
 			redis.createWordFreqStore(movie, movie.getWordListEng());
-		}		
-	}
+		}	
+	}*/
 	
 	
 }

@@ -2,17 +2,15 @@
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
 
 import redis.clients.jedis.*;
 
 public class Redis {
 	public Jedis jedis;
 	public Connection connection;
+	public ArrayList<Integer> keyList = new ArrayList<>();
 	
 	public Redis(){
 		jedis = new Jedis("localhost");
@@ -22,10 +20,11 @@ public class Redis {
 		String key = new Integer(movie.getId()).toString();
 		
 		for(Word word : wordList){
+			if(word.getFreq()>=10){
+				String freqStr = new Integer(word.getFreq()).toString();			
+				jedis.lpush(key,(word.getWord()+" "+freqStr) );
+			}
 			
-			String freqStr = new Integer(word.getFreq()).toString();
-			
-			jedis.lpush(key,(word.getWord()+" "+freqStr) );
 		}
 		
 	}
@@ -60,84 +59,60 @@ public class Redis {
 		}
 		return (long) response.get();
 	}
-	public int searchFreq(String value, ArrayList<Word> wordList){
+	public int searchFreq(String searchWord, ArrayList<Word> wordList){
+		//int control=0;
 		for(Word w : wordList){
-			if(w.getWord().equals(value)){
-				System.out.println(value+" "+w.getWord());
-				return w.getFreq();
-			}
+			String wordString = w.getWord();	
+				if(wordString.equals(searchWord)){
+				return w.getFreq();			}
 		}
 		return 0;
+		/*if(!wordString.equals(searchWord)){
+		//
+	}
+	else */
 	}
 	public void query(String... words){
-		jedis.select(1);
-		ArrayList<Integer> keyList = new ArrayList<Integer>();
-		for(int i=0; i<=9; i++){
-			keyList.add(new Integer(i));
-		}
-		//boolean bitti = false;
-		
+		jedis.select(1);		
 		
 		for(String word: words){
-			System.out.println("yeni kelime:"+word);
-			for(Integer key : keyList){
-				//System.out.println("yeni key:"+key);
-				if(key!=-1){
-					//System.out.println("baktýk");
-					String keyStr = key.toString();
+			for(Integer keyInt : this.keyList){
+				if(keyInt!=-1){					
+					String keyStr = keyInt.toString();
 					ArrayList<Word> wordList = collectValues(keyStr);
-					System.out.println("Key:"+key+" "+wordList.get(2).getWord());
-
 					int freq = searchFreq(word, wordList);
-					if(freq!=0){
-						System.out.println("Key:"+key+" valueWord:"+word+" valueFreq:"+freq);
-					}	
-					else {
-						System.out.println("Key:"+key+" removed");
-						int value =keyList.indexOf(key);
-						keyList.set(value, new Integer(-1));						
+					if(freq==0){
+						int index =keyList.indexOf(keyInt);
+						keyList.set(index, new Integer(-1));
 					}
-				}	
-				else 
-					System.out.println("bakmadýk");
-			}
-			for(Integer key : keyList){
-				System.out.println("Key:"+key);
-			}
-			
-		}
-		
-	}
-	/*public boolean deneme(String word, ArrayList<Integer> keyList, boolean bitti){
-		for(Object key : keyList){
-			
-			String keyStr = key.toString();
-			ArrayList<Word> wordList = collectValues(keyStr);
-			
-			int freq = searchFreq(word, wordList);
-			if(freq!=0){
-				System.out.println("Key:"+key+" valueWord:"+word+" valueFreq:"+freq);
+				}					
 			}	
-			else {
-				System.out.println("Key:"+key+" removed");	
-				keyList.remove(key);
-				bitti = true;
-			}					
 		}
-		return bitti;
-	}*/
+		MongoDB mongoDB = MongoDB.getMongoDB();
+		for(Integer keyInt : keyList){
+			if(keyInt!=-1){
+				System.out.println("Movie ID: "+keyInt);
+				mongoDB.query_with_id(keyInt);
+				
+			}
+		}
+	}
+	public void createRedis(ArrayList<Movie> movieList) throws IOException{
+		
+		jedis.flushAll();
+		
+		for(Movie movie : movieList){			
+			
+			System.out.println(movie.getInfoBox().getTitle()+" Redis");
+			movie.setWordLists();//movie'lerin word'lerini kelime-frekans olarak kaydeder
+			this.keyList.add(movie.getId());//redis'e kaydolan key'leri sakla
+			
+			jedis.select(0);
+			createWordFreqStore(movie, movie.getWordListTr());	
+			
+			jedis.select(1);
+			createWordFreqStore(movie, movie.getWordListEng());
+		}
+	}	
 }
-/*for(Object key : keyList){
 
-String keyStr = key.toString();
-ArrayList<Word> wordList = collectValues(keyStr);
-
-int freq = searchFreq(word, wordList);
-if(freq!=0){
-	System.out.println("Key:"+key+" valueWord:"+word+" valueFreq:"+freq);
-}	
-else {
-	System.out.println("Key:"+key+" removed");	
-	
-}					
-}*/

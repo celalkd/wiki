@@ -25,6 +25,15 @@ public class MongoDB {
 			printResult(result);
 		}
 	}
+	public void query_with_id(int id){
+		BasicDBObject query = new BasicDBObject();
+		query.append("_id", id);		
+		DBCursor cursor = collection.find(query);		
+		for(DBObject result : cursor){			
+			System.out.println("\n"+result.get("title"));
+			printResult(result);
+		}	
+	}
 	public void query_with_tags(String director, String yearMin, String yearMax, ArrayList<String> starring, ArrayList<String> genre, double rating ){
 		
 		BasicDBObject query = new BasicDBObject();
@@ -68,7 +77,6 @@ public class MongoDB {
 			query.append("rating",  new BasicDBObject("$gte", rating));
 		}
 		
-		System.out.print("\nQUERY: "+query.toJson()+"\nRESULT: ");
 		DBCursor cursor = collection.find(query);		
 		for(DBObject result : cursor){			
 			System.out.println("\n"+result.get("title"));
@@ -85,7 +93,8 @@ public class MongoDB {
 	}
 	
 	public void createAndInsertMovieDocs(ArrayList<Movie> movieArchieve){
-		init("moviesCollection");					
+		this.init("moviesCollection");	
+		this.clean();
 		for(Movie m : movieArchieve){
 			if(m.getVerified()){				
 				System.out.println(m.getInfoBox().getTitle()+" Mongodb");				
@@ -106,6 +115,16 @@ public class MongoDB {
 		}		
 		this.collection.insert(docList);//doldurulan doc listesi collectiona insert edilir
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/*public void createAndInsertContextDocs(ArrayList<Movie> movieArchieve,String language){
 		//ENG ve TR dosyalarý içindeki context dökümananlarýný mnngodbye geçirir
 		
@@ -133,6 +152,8 @@ public class MongoDB {
 		this.db = mongoClient.getDB("moviesDatabase");//database alýnýr
 		this.collection = db.getCollectionFromString(collectionName);//collection alýnýr
 		this.docList = new ArrayList<BasicDBObject>();//boþ doc listesi yaratýlýr
-		//this.collection.remove(new BasicDBObject());//collectioný temizlemek için
+	}
+	public void clean(){
+		this.collection.remove(new BasicDBObject());
 	}
 }

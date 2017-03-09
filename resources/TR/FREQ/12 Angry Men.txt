@@ -1,7 +1,9 @@
 WORD: senarist, FREQ: 1
 WORD: oyuncular, FREQ: 1
 WORD: lee, FREQ: 1
+WORD: j, FREQ: 1
 WORD: cobb, FREQ: 1
+WORD: e, FREQ: 1
 WORD: marshall, FREQ: 1
 WORD: martin, FREQ: 1
 WORD: balsam, FREQ: 1
@@ -37,6 +39,7 @@ WORD: beyaz, FREQ: 1
 WORD: yýlý, FREQ: 1
 WORD: çýkýþ, FREQ: 1
 WORD: tarih, FREQ: 1
+WORD: i, FREQ: 1
 WORD: süre, FREQ: 1
 WORD: dk, FREQ: 1
 WORD: dil, FREQ: 1
@@ -126,8 +129,10 @@ WORD: amerikan, FREQ: 1
 WORD: yasalarýna, FREQ: 1
 WORD: göre, FREQ: 1
 WORD: kararý, FREQ: 1
+WORD: ya, FREQ: 1
 WORD: alýnmalýdýr, FREQ: 1
 WORD: alýnmamýþ, FREQ: 1
+WORD: kendini, FREQ: 1
 WORD: feshetmesi, FREQ: 1
 WORD: davanýn, FREQ: 1
 WORD: görülmesi, FREQ: 1
@@ -163,6 +168,7 @@ WORD: kiþiliðini, FREQ: 1
 WORD: tanýyacaklarý, FREQ: 1
 WORD: odasýna, FREQ: 1
 WORD: girerler, FREQ: 1
+WORD: bundan, FREQ: 1
 WORD: sonraki, FREQ: 1
 WORD: konusu, FREQ: 1
 WORD: bazý, FREQ: 1
@@ -206,6 +212,7 @@ WORD: durumlarý, FREQ: 1
 WORD: göz, FREQ: 1
 WORD: önüne, FREQ: 1
 WORD: alarak, FREQ: 1
+WORD: sekiz, FREQ: 1
 WORD: numaralý, FREQ: 1
 WORD: azýlý, FREQ: 1
 WORD: rakipleri, FREQ: 1
@@ -250,6 +257,7 @@ WORD: müzakere, FREQ: 1
 WORD: devam, FREQ: 1
 WORD: ederken, FREQ: 1
 WORD: üyeleri, FREQ: 1
+WORD: son, FREQ: 1
 WORD: sýrasýyla, FREQ: 1
 WORD: kararýna, FREQ: 1
 WORD: doðru, FREQ: 1
@@ -264,6 +272,7 @@ WORD: yayýnlandý, FREQ: 1
 WORD: çalýþmanýn, FREQ: 1
 WORD: tekrar, FREQ: 1
 WORD: bulunana, FREQ: 1
+WORD: kadar, FREQ: 1
 WORD: kaybolduðu, FREQ: 1
 WORD: sanýlýyordu, FREQ: 1
 WORD: programýnýn, FREQ: 1
@@ -285,6 +294,8 @@ WORD: nýn, FREQ: 1
 WORD: tek, FREQ: 1
 WORD: yapýmcýlýk, FREQ: 1
 WORD: denemeleridir, FREQ: 1
+WORD: sonra, FREQ: 1
+WORD: asla, FREQ: 1
 WORD: olmayacaðýný, FREQ: 1
 WORD: belirtmiþtir, FREQ: 1
 WORD: milliyet, FREQ: 1
@@ -299,6 +310,7 @@ WORD: gösterime, FREQ: 1
 WORD: girdiðini, FREQ: 1
 WORD: bildiriyor, FREQ: 1
 WORD: friedkin, FREQ: 1
+WORD: c, FREQ: 1
 WORD: scott, FREQ: 1
 WORD: james, FREQ: 1
 WORD: gandolfini, FREQ: 1
@@ -338,6 +350,7 @@ WORD: büyük, FREQ: 1
 WORD: çoðunluðu, FREQ: 1
 WORD: orijinali, FREQ: 1
 WORD: aynýdýr, FREQ: 1
+WORD: ancak, FREQ: 1
 WORD: odasýnda, FREQ: 1
 WORD: sigara, FREQ: 1
 WORD: içilememesi, FREQ: 1
@@ -348,6 +361,7 @@ WORD: yenilemeler, FREQ: 1
 WORD: rus, FREQ: 1
 WORD: nikita, FREQ: 1
 WORD: mikhalkov, FREQ: 1
+WORD: kendi, FREQ: 1
 WORD: yapýmýný, FREQ: 1
 WORD: tamamladý, FREQ: 1
 WORD: venedik, FREQ: 1
@@ -399,6 +413,7 @@ WORD: safe, FREQ: 1
 WORD: tepe, FREQ: 1
 WORD: group, FREQ: 1
 WORD: öldüren, FREQ: 1
+WORD: kim, FREQ: 1
 WORD: deadly, FREQ: 1
 WORD: affair, FREQ: 1
 WORD: braverman, FREQ: 1
@@ -477,6 +492,7 @@ WORD: care, FREQ: 1
 WORD: gloria, FREQ: 1
 WORD: strip, FREQ: 1
 WORD: search, FREQ: 1
+WORD: beni, FREQ: 1
 WORD: bulun, FREQ: 1
 WORD: find, FREQ: 1
 WORD: before, FREQ: 1
@@ -532,6 +548,7 @@ WORD: yönetmeni, FREQ: 2
 WORD: filmi, FREQ: 2
 WORD: nisan, FREQ: 2
 WORD: i?ngilizce, FREQ: 2
+WORD: un, FREQ: 2
 WORD: ayný, FREQ: 2
 WORD: adlý, FREQ: 2
 WORD: üyesinin, FREQ: 2
@@ -551,6 +568,7 @@ WORD: baþlar, FREQ: 2
 WORD: oybirliði, FREQ: 2
 WORD: olan, FREQ: 2
 WORD: babasýný, FREQ: 2
+WORD: iki, FREQ: 2
 WORD: üyelerinin, FREQ: 2
 WORD: cinayette, FREQ: 2
 WORD: kullanýlan, FREQ: 2
@@ -568,6 +586,7 @@ WORD: registry, FREQ: 2
 WORD: wikipedia, FREQ: 2
 WORD: http, FREQ: 2
 WORD: web, FREQ: 2
+WORD: t, FREQ: 2
 WORD: kind, FREQ: 2
 WORD: lar, FREQ: 2
 WORD: day, FREQ: 2
@@ -580,6 +599,7 @@ WORD: garbo, FREQ: 2
 WORD: guilty, FREQ: 2
 WORD: madde, FREQ: 2
 WORD: henry, FREQ: 3
+WORD: g, FREQ: 3
 WORD: jack, FREQ: 3
 WORD: sinema, FREQ: 3
 WORD: yapým, FREQ: 3
@@ -590,9 +610,13 @@ WORD: ayrýca, FREQ: 3
 WORD: suçlu, FREQ: 3
 WORD: olduðunu, FREQ: 3
 WORD: çocuðun, FREQ: 3
+WORD: gibi, FREQ: 3
+WORD: en, FREQ: 3
 WORD: için, FREQ: 3
 WORD: yapýldý, FREQ: 3
+WORD: daha, FREQ: 3
 WORD: org, FREQ: 3
+WORD: d, FREQ: 3
 WORD: reginald, FREQ: 4
 WORD: suçsuz, FREQ: 4
 WORD: olarak, FREQ: 4
@@ -600,21 +624,31 @@ WORD: ilk, FREQ: 4
 WORD: karar, FREQ: 4
 WORD: cinayet, FREQ: 4
 WORD: jürinin, FREQ: 4
+WORD: s, FREQ: 4
 WORD: fonda, FREQ: 5
 WORD: abd, FREQ: 5
 WORD: ler, FREQ: 5
+WORD: on, FREQ: 5
 WORD: filmin, FREQ: 5
+WORD: da, FREQ: 5
 WORD: kaynaðý, FREQ: 5
 WORD: yeniden, FREQ: 5
+WORD: de, FREQ: 5
+WORD: a, FREQ: 5
 WORD: sidney, FREQ: 6
 WORD: rose, FREQ: 6
 WORD: yönettiði, FREQ: 6
+WORD: ile, FREQ: 6
 WORD: televizyon, FREQ: 6
+WORD: bu, FREQ: 6
 WORD: of, FREQ: 6
 WORD: lumet, FREQ: 7
+WORD: in, FREQ: 7
 WORD: öfkeli, FREQ: 9
 WORD: adam, FREQ: 10
 WORD: deðiþtir, FREQ: 10
 WORD: film, FREQ: 12
+WORD: bir, FREQ: 13
 WORD: jüri, FREQ: 14
 WORD: the, FREQ: 21
+WORD: ve, FREQ: 24

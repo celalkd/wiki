@@ -95,53 +95,39 @@ public class Movie {
 		}    	
 	}
 	
+	public void setWordLists() throws IOException{
+		String textBody = findContext(this.getVikiURL_TR(),"TR");				
+		this.splitContext(textBody, this.getWordListTr(), "TR");
+		
+		textBody = findContext(this.getWikiURL_EN(),"ENG");				
+		this.splitContext(textBody, this.getWordListEng(), "ENG");
+	}
+	
 	public String findContext(String url, String language) throws IOException{
-		//verilen url'ye göre context bulan method(url movie objesine ait wiki ve ya viki)
-		//archivede movieArchive listesindeki her bir movienin body contextini almak için kullanýcak
+		
 		Document doc = Jsoup.connect(url).get();
-		
-		//wikipedia'da içeriði çekmek için gerekli elementin tagi "div#mw-content-text"
 		String textBody = doc.select("div#mw-content-text").text();
-		
-		//verilen dil seçeneðine göre movie'ye ait context fiedlarýný seçiyor(eng veya tr)
 		if(language.equals("TR"))
-			//eðer sayfanýn dili türkçe ise setContent_TR methodu ile context_TR fieldýna set edilir.
 			this.setContext_TR(textBody);
 		
 		else if(language.equals("ENG"))
-			//eðer sayfanýn dili ingilizce ise setContent_ENG methodu ile context_ENG fieldýna set edilir.
 			this.setContext_ENG(textBody);
-		
-		//içeriðin yine dile göre dosyaya yazýlmasý için textBody deðiþkeni return edilir
 		return textBody;
 	}
 	
 	public void splitContext(String textBody, ArrayList<Word> wordList, String language){
-		//verilen contexti(Wikipedia sayfasýnýn tüm içeriði) kelimelere ayýran method	
-		//archivede movieArchive listesindeki her bir movienin body contextini kelimelerini ayýrmak için
-		//parametrelerdeki ArrayList'in kaynaðý bu
-		
-		String[] words = textBody.split("[\\p{Punct}\\s]+");//ayýrma koþulu
-		
+		String[] words = textBody.split("[\\p{Punct}\\s]+");
 		for(String word_str : words){
-			if(Character.isLetter(word_str.charAt(0)) ){//eldeki string bir harfle baþlýyorsa yani sayý deðil ise
-				
-				//eldeki kelimeyi arama iþlemi aþaðýdaki method ile yapýlacak
-				//daha önce bu kelimeyi kaydetmiþ miyiz?
-				//kaydetmiþsek frekansý 1 arttýrýlýr.
-				//kaydetmemiþsek
+			if(Character.isLetter(word_str.charAt(0)) ){
 				searchWordAndIncFreq(word_str,wordList,language);				
 			}
 		}
-		Collections.sort(wordList, new CustomComparator());//alfabetik sýralama yapmak için çalýþan comparator
+		Collections.sort(wordList, new CustomComparator());
 	}
 	
 	public void searchWordAndIncFreq(String str, ArrayList<Word> wordList, String language){
 		
-		//tüm kelimeler küçük harfe çevrilir(örneðin Movie ve movie kelimeleri farklý kabul edilmemeli)
 		str = str.toLowerCase();
-		
-		
 		ArrayList<String> selectedLangStopWordList = null;
 		
 		if(language.equals("ENG"))
@@ -158,8 +144,8 @@ public class Movie {
 	                find=true;
 	            }
 	        }
-	        if(!find){//bu word bulunamadýysa
-	            Word a_word = new Word(str);//yeni yarat(freq=1 yapýldý constructorda)
+	        if(!find){
+	            Word a_word = new Word(str);
 	            wordList.add(a_word);
 	        }
 		}
