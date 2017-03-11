@@ -55,7 +55,7 @@ public class Archive {
 		}
 	}
 	public void checkMovies(String content) throws IOException{
-				
+		
 		Integer id_index=0;
 		String[] movieRowsIMDB = content.split("\\n");//satýrlar enter karakterine göre ayrýlýyor
 		
@@ -74,7 +74,6 @@ public class Archive {
 							}else title += " "+titleParts[j];
 						}
 						comparisonInfoBox.setTitle(title);
-						break;
 					case 2:
 						String director = dataColumns[i];
 						comparisonInfoBox.setDirector(director);
@@ -123,12 +122,12 @@ public class Archive {
 		//dil seçeneðine göre ayný iþlem farklý kelime listeleri üzerinde yapýlýr
 		for(Movie movie : this.getMovieArchive()){
 			if(language.equals("TR")){
-				String textBody = movie.findContext(movie.getVikiURL_TR(),language);				
-				movie.splitContext(textBody, movie.getWordListTr(), language);				
+				String textBody = movie.setAndReturnContext(movie.getVikiURL_TR(),language);				
+				movie.splitContextToWords(textBody, movie.getWordListTr(), language);				
 			}
 			else if(language.equals("ENG")){
-				String textBody = movie.findContext(movie.getWikiURL_EN(),language);
-				movie.splitContext(textBody, movie.getWordListEng(),language);
+				String textBody = movie.setAndReturnContext(movie.getWikiURL_EN(),language);
+				movie.splitContextToWords(textBody, movie.getWordListEng(),language);
 			}
 		}
 		FileIO.getFileIO().writeWordsAndFreqsToFile(language);//arþiv üzerinden tüm film nesneleri için

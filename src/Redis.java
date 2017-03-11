@@ -2,7 +2,9 @@
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 
 
 import redis.clients.jedis.*;
@@ -15,6 +17,7 @@ public class Redis {
 	public Redis(){
 		jedis = new Jedis("localhost");
 	}
+	
 	public void createWordFreqStore(Movie movie, ArrayList<Word> wordList){
 		
 		String key = new Integer(movie.getId()).toString();
@@ -23,11 +26,26 @@ public class Redis {
 			if(word.getFreq()>=10){
 				String freqStr = new Integer(word.getFreq()).toString();			
 				jedis.lpush(key,(word.getWord()+" "+freqStr) );
-			}
-			
-		}
-		
+			}			
+		}		
 	}
+	public void createRedis(ArrayList<Movie> movieList) throws IOException{
+		
+		jedis.flushAll();
+		
+		for(Movie movie : movieList){			
+			
+			System.out.println(movie.getInfoBox().getTitle()+" Redis");
+			movie.setWordLists();//movie'lerin word'lerini kelime-frekans olarak kaydeder
+			
+			jedis.select(0);
+			createWordFreqStore(movie, movie.getWordListTr());	
+			
+			jedis.select(1);
+			createWordFreqStore(movie, movie.getWordListEng());
+		}
+	}	
+	
 	public Word parseValue(String value){
 		Word word = new Word();
 		String[] strings = value.split(" ");
@@ -72,9 +90,16 @@ public class Redis {
 	}
 	else */
 	}
+	public void getKeyList(){
+		Iterator<String> iterator = jedis.keys("*").iterator();
+		while(iterator.hasNext()){
+			Integer i = Integer.parseInt(iterator.next());
+			this.keyList.add(i);
+		}
+	}
 	public void query(String... words){
 		jedis.select(1);		
-		
+		this.getKeyList();
 		for(String word: words){
 			for(Integer keyInt : this.keyList){
 				if(keyInt!=-1){					
@@ -89,30 +114,16 @@ public class Redis {
 			}	
 		}
 		MongoDB mongoDB = MongoDB.getMongoDB();
+		Neo4j neo4j = new Neo4j();
 		for(Integer keyInt : keyList){
 			if(keyInt!=-1){
 				System.out.println("Movie ID: "+keyInt);
 				mongoDB.query_with_id(keyInt);
-				
+				neo4j.query(keyInt.toString());
 			}
 		}
 	}
-	public void createRedis(ArrayList<Movie> movieList) throws IOException{
-		
-		jedis.flushAll();
-		
-		for(Movie movie : movieList){			
-			
-			System.out.println(movie.getInfoBox().getTitle()+" Redis");
-			movie.setWordLists();//movie'lerin word'lerini kelime-frekans olarak kaydeder
-			this.keyList.add(movie.getId());//redis'e kaydolan key'leri sakla
-			
-			jedis.select(0);
-			createWordFreqStore(movie, movie.getWordListTr());	
-			
-			jedis.select(1);
-			createWordFreqStore(movie, movie.getWordListEng());
-		}
-	}	
+	
+	
 }
 

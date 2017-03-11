@@ -25,7 +25,6 @@ WORD: viewership, FREQ: 1
 WORD: competition, FREQ: 1
 WORD: initial, FREQ: 1
 WORD: disappointment, FREQ: 1
-WORD: thje, FREQ: 1
 WORD: highly, FREQ: 1
 WORD: realism, FREQ: 1
 WORD: gaining, FREQ: 1
@@ -1529,4 +1528,4 @@ WORD: a, FREQ: 96
 WORD: in, FREQ: 96
 WORD: and, FREQ: 108
 WORD: of, FREQ: 138
-WORD: the, FREQ: 349
+WORD: the, FREQ: 350

@@ -4,7 +4,6 @@ import com.mongodb.*;
 public class MongoDB {
 	private static MongoDB  mongodb   = new MongoDB();
 	private ArrayList<BasicDBObject> docList ;
-	//private int id;
 	private MongoClient mongoClient ;	 
 	private DB db ;
 	private DBCollection collection;	
@@ -17,25 +16,48 @@ public class MongoDB {
 		return mongodb;
 	}
 	
+	public void createAndInsertMovieDocs(ArrayList<Movie> movieArchieve){
+		this.init("moviesCollection");	
+		this.clean();
+		for(Movie m : movieArchieve){
+			if(m.getVerified()){				
+				System.out.println(m.getInfoBox().getTitle()+" Mongodb");				
+				BasicDBObject movieDoc = new BasicDBObject();				
+				movieDoc.append("_id",m.getId())
+				 .append("title", m.getInfoBox().getTitle())
+				 .append("director", m.getInfoBox().getDirector())
+				 .append("year", m.getYear())
+				 .append("starring", m.getInfoBox().getStarring())
+				 .append("genre", m.getGenre())
+				 .append("rating", m.getRating())
+				 .append("wikiURL", m.getWikiURL_EN())
+				 .append("vikiURL", m.getVikiURL_TR())
+				 /*.append("context_ENG", m.getContext_ENG())
+				 .append("context_TR", m.getContext_TR())*/;	
+				docList.add(movieDoc);
+			}
+		}		
+		this.collection.insert(docList);//doldurulan doc listesi collectiona insert edilir
+	}
+	
 	public void query_with_title(String title){
-		
-		DBCursor cursor = collection.find(new BasicDBObject("title", title));
-		
+		init("moviesCollection");
+		DBCursor cursor = collection.find(new BasicDBObject("title", title));		
 		for(DBObject result : cursor){
 			printResult(result);
 		}
 	}
 	public void query_with_id(int id){
+		init("moviesCollection");
 		BasicDBObject query = new BasicDBObject();
 		query.append("_id", id);		
 		DBCursor cursor = collection.find(query);		
-		for(DBObject result : cursor){			
-			System.out.println("\n"+result.get("title"));
+		for(DBObject result : cursor){
 			printResult(result);
 		}	
 	}
 	public void query_with_tags(String director, String yearMin, String yearMax, ArrayList<String> starring, ArrayList<String> genre, double rating ){
-		
+		init("moviesCollection");
 		BasicDBObject query = new BasicDBObject();
 		ArrayList<BasicDBObject> obj = new ArrayList<BasicDBObject>();
 		
@@ -78,13 +100,13 @@ public class MongoDB {
 		}
 		
 		DBCursor cursor = collection.find(query);		
-		for(DBObject result : cursor){			
-			System.out.println("\n"+result.get("title"));
+		for(DBObject result : cursor){
 			printResult(result);
 		}	
 		
 	}
-	public void printResult(DBObject result){
+	public void printResult(DBObject result){		
+		System.out.println("\nTitle: "+result.get("title"));
 		System.out.println("Directed By: " + result.get("director"));
 		System.out.println("Starring: " + result.get("starring"));
 		System.out.println("Year: " + result.get("year"));
@@ -92,31 +114,16 @@ public class MongoDB {
 		System.out.println("Rating: " + result.get("rating"));
 	}
 	
-	public void createAndInsertMovieDocs(ArrayList<Movie> movieArchieve){
-		this.init("moviesCollection");	
-		this.clean();
-		for(Movie m : movieArchieve){
-			if(m.getVerified()){				
-				System.out.println(m.getInfoBox().getTitle()+" Mongodb");				
-				BasicDBObject movieDoc = new BasicDBObject();				
-				movieDoc.append("_id",m.getId())
-				 .append("title", m.getInfoBox().getTitle())
-				 .append("director", m.getInfoBox().getDirector())
-				 .append("year", m.getYear())
-				 .append("starring", m.getInfoBox().getStarring())
-				 .append("genre", m.getGenre())
-				 .append("rating", m.getRating())
-				 .append("wikiURL", m.getWikiURL_EN())
-				 .append("vikiURL", m.getVikiURL_TR())
-				 .append("context_ENG", m.getContext_ENG())
-				 .append("context_TR", m.getContext_TR());	
-				docList.add(movieDoc);
-			}
-		}		
-		this.collection.insert(docList);//doldurulan doc listesi collectiona insert edilir
+	@SuppressWarnings("deprecation")
+	public void init(String collectionName){
+		this.mongoClient = new MongoClient( "localhost" , 27017 );	 //porta baðlanýlýr
+		this.db = mongoClient.getDB("moviesDatabase");//database alýnýr
+		this.collection = db.getCollectionFromString(collectionName);//collection alýnýr
+		this.docList = new ArrayList<BasicDBObject>();//boþ doc listesi yaratýlýr
 	}
-	
-	
+	public void clean(){
+		this.collection.remove(new BasicDBObject());
+	}
 	
 	
 	
@@ -147,13 +154,5 @@ public class MongoDB {
 		this.collection.insert(docList);//dolan liste collectiona insert edilir
 		
 	}*/
-	public void init(String collectionName){
-		this.mongoClient = new MongoClient( "localhost" , 27017 );	 //porta baðlanýlýr
-		this.db = mongoClient.getDB("moviesDatabase");//database alýnýr
-		this.collection = db.getCollectionFromString(collectionName);//collection alýnýr
-		this.docList = new ArrayList<BasicDBObject>();//boþ doc listesi yaratýlýr
-	}
-	public void clean(){
-		this.collection.remove(new BasicDBObject());
-	}
+	
 }

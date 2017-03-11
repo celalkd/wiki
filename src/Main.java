@@ -7,19 +7,26 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		
 		DatabaseLayer db = new DatabaseLayer();
-		db.build();					
+		//db.build();					
 				
 		ArrayList<String> starring = new ArrayList<>();
-		ArrayList<String> genre = new ArrayList<>();		
-		starring.add("Al Pacino");
-		starring.add("Diane Keaton");		
-		genre.add("Crime");
-		genre.add("Drama");		
+		ArrayList<String> genre = new ArrayList<>();	
+		String director ="Christopher Nolan";
+		String yearMin = "2000";
+		String yearMax = null;
+		starring.add("Leonardo DiCaprio");		
+		genre.add("Action");
+		double rating = 8.5;
 		
-		db.mongoDB.init("moviesCollection");
-		db.redis.query("godfather", "corleone", "niro");
-		db.mongoDB.query_with_tags(null, "1973","1975", starring, genre, 8.5);		
-		db.mongoDB.query_with_title("The Godfather Part II");	
+		
+		//db.redis.query("run", "forrest");
+		//db.mongoDB.query_with_tags(director, yearMin, yearMax, starring, genre, rating);
+		db.neo4j.deneme("0");
+		
+		//redis query'den key listesi döner
+		//mongodb sorgusuna bu key'ler OR'lanarak append edilir
+		//daha specific bir arama yapýlmýþ olur
+		//mesela "ring", "frodo" 3 filimde bulunu ben 2000'den son olan diye kýsýtlama koyup bulabilirim 
 		
 	}
 		

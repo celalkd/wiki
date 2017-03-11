@@ -51,7 +51,7 @@ public class FileIO {
 	}
 	public void openandWritetoFile() throws IOException{
 		
-		File file = new File("C:\\Users\\celalkd\\workspace_\\WikiMiningMaven\\resources\\AllMovies.txt");
+		File file = new File("C:\\Users\\celalkd\\workspace_\\WikiMiningMaven\\resources\\movieArchieve.txt");
 		file.createNewFile();
 		FileWriter fos= new FileWriter(file);
 		for(Movie item: Archive.getArchive().getMovieArchive()){
@@ -63,8 +63,16 @@ public class FileIO {
 	}
 	public void writeWordsAndFreqsToFile(String langFolder) throws IOException{
 		for(Movie item: Archive.getArchive().getMovieArchive()){
-			File file_freq = new File("C:\\Users\\celalkd\\workspace_\\WikiMiningMaven\\resources\\"+langFolder+"\\FREQ\\"+item.getInfoBox().getTitle()+".txt");
-			File file_context = new File("C:\\Users\\celalkd\\workspace_\\WikiMiningMaven\\resources\\"+langFolder+"\\CONTEXT\\"+item.getInfoBox().getTitle()+".txt");
+			String fileName = item.getInfoBox().getTitle();
+			if(fileName.contains(":")){
+				String[] parts = fileName.split(":");
+				fileName = parts[0]+parts[1];
+			}
+			fileName = fileName+".txt";
+			
+			
+			File file_freq = new File("C:\\Users\\celalkd\\workspace_\\WikiMiningMaven\\resources\\"+langFolder+"\\FREQ\\"+fileName);
+			File file_context = new File("C:\\Users\\celalkd\\workspace_\\WikiMiningMaven\\resources\\"+langFolder+"\\CONTEXT\\"+fileName);
 
 			file_freq.createNewFile();
 			file_context.createNewFile();

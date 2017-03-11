@@ -10,6 +10,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.junit.validator.PublicClassValidator;
 
+import com.mongodb.Bytes;
+
 public class Movie {
 	
 	static float success;
@@ -52,7 +54,7 @@ public class Movie {
 		
 		FileIO fileIO = FileIO.getFileIO();
 		String activeLink = null;
-		//System.out.println(this.id+")"+this.wikiURL_EN);
+
 		if(fileIO.check404(this.wikiURL_EN+"_("+this.year+"_film)")){
 			activeLink = this.wikiURL_EN+"_("+this.year+"_film)";
 		}
@@ -65,11 +67,9 @@ public class Movie {
 		else {
 			activeLink = "No Url Source";
 			setNoAnyLangSource(getNoAnyLangSource() + 1);//ingilizce kaynak yoksa türkçe kaynak da çýkmayacaðýný kabul ediyoruz
-		}
-		//System.out.println(" *active URL: "+activeLink);
+		}		
 		this.setWikiURL_EN(activeLink);
 	}
-	
 	public void setActiveVikiURL(){
 		/*
 		 * setActiveWikiLink() methodu çalýþtýktan sonra elimizde movienin eriþilebilir ve doðru inglizce linki var
@@ -92,30 +92,29 @@ public class Movie {
 	    	}	    	
 		} catch (Exception e) {
 			e.printStackTrace();
-		}    	
+		} 
 	}
 	
 	public void setWordLists() throws IOException{
-		String textBody = findContext(this.getVikiURL_TR(),"TR");				
-		this.splitContext(textBody, this.getWordListTr(), "TR");
+		String textBody = setAndReturnContext(this.getVikiURL_TR(),"TR");				
+		this.splitContextToWords(textBody, this.getWordListTr(), "TR");
 		
-		textBody = findContext(this.getWikiURL_EN(),"ENG");				
-		this.splitContext(textBody, this.getWordListEng(), "ENG");
+		textBody = setAndReturnContext(this.getWikiURL_EN(),"ENG");				
+		this.splitContextToWords(textBody, this.getWordListEng(), "ENG");
 	}
-	
-	public String findContext(String url, String language) throws IOException{
+	public String setAndReturnContext(String url, String language) throws IOException{
 		
 		Document doc = Jsoup.connect(url).get();
 		String textBody = doc.select("div#mw-content-text").text();
-		if(language.equals("TR"))
+		if(language.equals("TR")){
 			this.setContext_TR(textBody);
-		
-		else if(language.equals("ENG"))
+		}
+		else if(language.equals("ENG")){
 			this.setContext_ENG(textBody);
+		}
 		return textBody;
 	}
-	
-	public void splitContext(String textBody, ArrayList<Word> wordList, String language){
+	public void splitContextToWords(String textBody, ArrayList<Word> wordList, String language){
 		String[] words = textBody.split("[\\p{Punct}\\s]+");
 		for(String word_str : words){
 			if(Character.isLetter(word_str.charAt(0)) ){
@@ -123,8 +122,7 @@ public class Movie {
 			}
 		}
 		Collections.sort(wordList, new CustomComparator());
-	}
-	
+	}	
 	public void searchWordAndIncFreq(String str, ArrayList<Word> wordList, String language){
 		
 		str = str.toLowerCase();

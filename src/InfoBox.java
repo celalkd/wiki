@@ -107,8 +107,7 @@ public class InfoBox {
 			String html = res.body();
 			Document doc = Jsoup.parseBodyFragment(html);
 			Element element = doc.select(path).first();
-			this.title = element.text();
-			
+			this.title = element.text();			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -136,7 +135,7 @@ public class InfoBox {
 		}
 			
 		if(!this.director.equals(other.getDirector())){
-			System.out.println("Dismatch: "+this.director+"!="+other.getDirector());
+			System.out.println("Mismatch: "+this.director+"!="+other.getDirector());
 			return false;
 		}			
 		
