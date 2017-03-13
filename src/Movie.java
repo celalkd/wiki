@@ -1,16 +1,12 @@
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.junit.validator.PublicClassValidator;
-
-import com.mongodb.Bytes;
 
 public class Movie {
 	

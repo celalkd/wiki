@@ -20,12 +20,13 @@ public class InfoBox {
 		/*
 		 * wikipedia kaynaðýndaki element pathleri setter methodlara gönderilir
 		 */
-		setTitle(vikiURL, "#mw-content-text > table.infobox.vevent > tbody > tr:nth-child(1) > th.summary");
+                String htmlPath = "#mw-content-text > table.infobox.vevent > tbody > tr:nth-child(1) > th.summary";
+		setTitle(vikiURL, htmlPath);
 		setDirector(vikiURL,0);
 		setStarring(vikiURL,0);
 	}
 	
-	//CUSTOM SETTER METHODS
+	//CUSTOM SETTER METHODS        
 	public void setDirector(String director){
 		this.director = director;
 	}

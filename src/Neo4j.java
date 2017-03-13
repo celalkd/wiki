@@ -9,6 +9,7 @@ import static org.neo4j.driver.v1.Values.parameters;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.naming.spi.DirStateFactory.Result;
 
@@ -16,6 +17,7 @@ public class Neo4j {
 	public Driver driver ;
 	public Session session ;
 	String bookmark;
+	ArrayList<MoviePoints> pointList = new ArrayList<>();
 	
 	public Neo4j(){
 		driver = GraphDatabase.driver( "bolt://localhost:7687", AuthTokens.basic( "neo4j", "neo4jj" ) );
@@ -23,62 +25,7 @@ public class Neo4j {
 		
 	}
 	
-	public void cleanDatabase(){
-		this.session.run("MATCH (n)" +
-						"OPTIONAL MATCH (n)-[r]-() "+
-						"DELETE n,r");
-	}
 	
-	public ArrayList<String> collectLinks(String wikiUrl){
-		
-		
-		ArrayList<String> urlList = new ArrayList<>();
-		
-		Response res;
-		try {	
-			res = Jsoup.connect(wikiUrl).execute();
-			String html = res.body();
-			Document doc = Jsoup.parseBodyFragment(html);
-			Element paragraph = doc.select("#content").first().select("p").first();
-			Elements links = paragraph.select("a");
-			for(Element e : links){	
-				String href = e.attr("href");
-				if(!href.startsWith("#") && !href.startsWith("https://")){
-					urlList.add("https://en.wikipedia.org"+href);
-				}
-				if(href.startsWith("https://")){
-					urlList.add(href);
-				}
-				
-			}			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.out.println(wikiUrl);
-			e.printStackTrace();
-		}		
-		return urlList;
-	}
-	
-	public void writeMovie(Movie movie){
-		
-		try ( Session session = driver.session( AccessMode.WRITE ) )
-		{
-		        try ( Transaction tx = session.beginTransaction() )
-		        {
-		        	String url = movie.getWikiURL_EN();
-		    		String id = new Integer(movie.getId()).toString();		    		
-		    		
-		    		tx.run( "CREATE (a:Movie {id: {id}, url: {url}})", parameters( "id", id, "url", url));
-		            tx.success();
-		            tx.close();
-		        }
-		        finally
-		        {
-		            bookmark = session.lastBookmark();
-		        }
-		}		
-		
-	}
 	
 	public boolean readGraphData(String url){
 		
@@ -148,7 +95,314 @@ public class Neo4j {
 		}
 		return false;
 	}
-	public void deneme(String id){
+	public void writeMovie(Movie movie){
+		
+		try ( Session session = driver.session( AccessMode.WRITE ) )
+		{
+		        try ( Transaction tx = session.beginTransaction() )
+		        {
+		        	String url = movie.getWikiURL_EN();
+		    		String id = new Integer(movie.getId()).toString();		    		
+		    		
+		    		tx.run( "CREATE (a:Movie {id: {id}, url: {url}})", parameters( "id", id, "url", url));
+		            tx.success();
+		            tx.close();
+		        }
+		        finally
+		        {
+		            bookmark = session.lastBookmark();
+		        }
+		}		
+		
+	}
+	public void writeLink(String url){
+		if(!readGraphData(url)){
+			try ( Session session = driver.session( AccessMode.WRITE ) )
+		    {
+		        try ( Transaction tx = session.beginTransaction(bookmark) )
+		        {		        	
+		    		tx.run( "CREATE (a:Link {url: {url}})", parameters("url", url));
+		            tx.success();
+		            tx.close();
+		        }
+		        finally
+		        {
+		            bookmark = session.lastBookmark();
+		        }
+		    }
+		}
+	}
+	
+	public void connectMovie_Link(String movieUrl, String link){
+		
+		try ( Session session = driver.session( AccessMode.WRITE )  )
+	    {
+	        try ( Transaction tx = session.beginTransaction(bookmark) )
+	        {		        	
+	    		tx.run("MATCH (m:Movie),(l:Link) "
+						+ "WHERE m.url = {movieUrl} AND l.url ={link} "
+						+ "CREATE (m)-[r:level1]->(l)", parameters( "movieUrl", movieUrl, "link", link) );
+	            tx.success();
+	            tx.close();
+	        }
+	        finally
+	        {
+	            bookmark = session.lastBookmark();
+	        }
+	    }
+	}
+	public void connectLink_Link(String link1, String link2){
+		if(!readGraphRealitonship(link1, link2)){
+			try ( Session session = driver.session( AccessMode.WRITE )  )
+			{
+			    try ( Transaction tx = session.beginTransaction(bookmark) )
+			    {		        	
+					tx.run("MATCH (u:Link),(l:Link) "
+							+ "WHERE u.url = {link1} AND l.url ={link2} "
+							+ "CREATE (u)-[r:level2]->(l)", parameters( "link1", link1, "link2", link2) );
+			        tx.success();
+			        tx.close();
+			    }
+			    finally
+			    {
+			        bookmark = session.lastBookmark();
+			    }
+			}
+		}
+	}
+	public void createGraph(ArrayList<Movie> movieList){
+				
+		ArrayList<String> links_depth_1 = new ArrayList<>();
+		ArrayList<String> links_depth_2 = new ArrayList<>();
+		
+		this.cleanDatabase();
+				
+		for(Movie movie : movieList){
+
+			System.out.println(movie.getInfoBox().getTitle()+" Neo4j");
+			
+			if(!movie.getWikiURL_EN().equals("No Url Source")){
+				writeMovie(movie);
+				links_depth_1 = collectLinks(movie.getWikiURL_EN());
+				for(String link1 : links_depth_1){
+									
+					writeLink(link1);
+					connectMovie_Link(movie.getWikiURL_EN(), link1);
+					links_depth_2 = collectLinks(link1);
+					for(String link2 : links_depth_2){
+						writeLink(link2);
+						connectLink_Link(link1, link2);
+					}
+				}
+			}
+			else {
+				System.out.println(movie.getWikiURL_EN());
+			}
+		}				
+	}
+	public void cleanDatabase(){
+		this.session.run("MATCH (n)" +
+						"OPTIONAL MATCH (n)-[r]-() "+
+						"DELETE n,r");
+	}	
+	public ArrayList<String> collectLinks(String wikiUrl){
+		
+		
+		ArrayList<String> urlList = new ArrayList<>();
+		
+		Response res;
+		try {	
+			res = Jsoup.connect(wikiUrl).execute();
+			String html = res.body();
+			Document doc = Jsoup.parseBodyFragment(html);
+			Element paragraph = doc.select("#content").first().select("p").first();
+			Elements links = paragraph.select("a");
+			for(Element e : links){	
+				String href = e.attr("href");
+				if(!href.startsWith("#") && !href.startsWith("https://")){
+					urlList.add("https://en.wikipedia.org"+href);
+				}
+				if(href.startsWith("https://")){
+					urlList.add(href);
+				}
+				
+			}			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println(wikiUrl);
+			e.printStackTrace();
+		}		
+		return urlList;
+	}
+	
+	public void query(String id){
+		StatementResult result;
+		
+		try ( Session session = driver.session( AccessMode.READ ) )
+	    {
+	        try ( Transaction tx = session.beginTransaction(bookmark) )
+	        {
+	        	result = tx.run( "MATCH (:Movie { id: {id} })"
+	        			+ "-[r:level1]->(p) "
+	        			+ "RETURN p.url",
+	    		        parameters( "id", id ) );
+	        	tx.success();
+	            tx.close();
+	        }
+	        finally
+	        {
+	            bookmark = session.lastBookmark();
+	        }
+	    }
+		while(result.hasNext()){
+			System.out.println(result.next().get("p.url"));
+		}	
+	}
+	
+	public void recommend(String id_input){
+		int level1_point = 10;//1. seviye
+		int level2_point = 5;//2. seviye
+		int level3_point = 2;//3. seviye
+		
+		StatementResult level_1_Links = movieAndLink_getLinkURL(id_input);//filmin ilk seviye baðlý linkleri alýnýr
+		
+		while(level_1_Links.hasNext()){//filmin ilk seviye baðlý linkleri gezilir
+			Record a_Level_1_Link = level_1_Links.next();
+			
+			depth1(a_Level_1_Link, id_input, level1_point);//bu linkin direk olarak baþka bir filme baðlý olma durumu
+			depth2(a_Level_1_Link, id_input, level2_point);//bu linkin baðlý olduðu ikinci bir linkin baþka bir filme baðlý olma durumu
+			depth3(a_Level_1_Link, id_input, level3_point);//bu linkin baðlý olduðu ikinci bir linkin, baðlý olduðu üçüncü bir linkin baþka bir filme baðlý olma durumu
+		}
+		
+		printPoints();
+		pointList.clear();
+		
+	}
+	public void depth1(Record theLink, String id_input, int point){
+		
+		String level1URL = substring(theLink.get("l.url").toString());
+		StatementResult result = linkAndMovie_getMovieID(level1URL);//filme baðlý mý sorgula
+		while(result.hasNext()){
+			Record theMovie = result.next();			
+			String level1MoiveID = substring(theMovie.get("m.id").toString());
+			if(!level1MoiveID.equals(id_input)){
+				addPoints(theMovie, id_input, point);//filme baðlýysa resulttan gelen filme listede puanýný ekle
+			}
+		}
+	}
+	public void depth2(Record theLink, String id_input, int point){
+		String level2URL = substring(theLink.get("l.url").toString());
+		StatementResult result = linkAndLink_getURL(level2URL);//linke baðlý mý sorgula
+		while(result.hasNext()){
+			Record r = result.next();
+			depth1(r, id_input, point);//linkin baðlý olduðu link(resulttan gelen), filme baðlý mý sorgula
+		}		
+	}
+	public void depth3(Record theLink, String id_input, int point){
+		String level3URL = substring(theLink.get("l.url").toString());
+		StatementResult result = linkAndLink_getURL(level3URL);//linke baðlý mý sorgula
+		while(result.hasNext()){			
+			Record r = result.next();
+			depth2(r, id_input, point);//linkin baðlý olduðu link(resulttan gelen), baþka bir linke ve o link de baþka filme baðlý mý sorgula
+		}		
+	}	
+	public StatementResult linkAndLink_getURL(String url_input) {
+		/*
+		 * eldeki Link'in level2 relationship'i ile baðlý olduðu 
+		 * Link'lerin url attribute'unu almamýzý saðlayan method
+		 */
+		StatementResult result;
+		
+		try ( Transaction tx = session.beginTransaction(bookmark) )
+		{
+			result = tx.run( "MATCH p =(:Link {url:{url1}})-[r:level2]-(l:Link) RETURN l.url",
+		    		       parameters( "url1", url_input) );
+		    tx.success();
+		    tx.close();
+		}
+		return result;
+		
+	}
+	public StatementResult linkAndMovie_getMovieID(String url_input) {
+		/*
+		 * eldeki Link'in level1 relationship'i ile baðlý olduðu 
+		 * Movie'lerin id attribute'unu almamýzý saðlayan method
+		 */
+		StatementResult result;
+			
+		try ( Transaction tx = session.beginTransaction(bookmark) )
+		{
+			result = tx.run( "MATCH p =(m:Movie)-[r:level1]-(l:Link{url:{url1}}) RETURN m.id",
+			    		       parameters( "url1", url_input) );
+			 tx.success();
+			 tx.close();
+		}		
+		return result;		
+	}
+	public StatementResult movieAndLink_getLinkURL(String id_input) {
+		/*
+		 * eldeki Movie'nin level1 relationship'i ile baðlý olduðu 
+		 * Link'lerin url attribute'unu almamýzý saðlayan method
+		 * en baþta bu method çaðýrýlýr
+		 */
+		StatementResult result;
+			
+		try ( Transaction tx = session.beginTransaction(bookmark) )
+		{
+			result = tx.run( "MATCH p =(m:Movie {id:{id}})-[r:level1]-(l:Link) RETURN l.url",
+			    		       parameters( "id", id_input) );
+			 tx.success();
+			 tx.close();
+		}		
+		return result;		
+	}
+	
+	public void addPoints(Record record, String id_input, int point) {
+		
+			Integer newID = Integer.parseInt(substring(record.get("m.id").toString()));
+			MoviePoints mp = searchArray(newID, pointList);
+			if(newID != Integer.parseInt(id_input)){
+				if(mp==null){
+					pointList.add(new MoviePoints(newID, point));
+				}
+				else{
+					mp.point = mp.point+point;
+				}
+			}
+		
+	}
+	public MoviePoints searchArray(int id, ArrayList<MoviePoints> list){
+		for(MoviePoints moviePoint:list){
+			if(moviePoint.id==id){				 
+				return moviePoint;
+			}
+		}
+		return null;
+		
+	}
+	public String substring(String str){		
+		return str.substring(1, str.length()-1);		
+	}
+
+	public class MoviePoints{
+		int id;
+		int point;
+		
+		public MoviePoints(int id, int point){
+			this.id = id;
+			this.point = point;
+		}
+	}
+	public void printPoints(){
+		for(MoviePoints m : pointList){
+			System.out.println("Movie:"+m.id+"("+m.point+" points)");
+		}		
+	}	
+}
+
+
+/*
+public void deneme(String id){
 		ArrayList<MoviePoints> pointList = new ArrayList<>();
 		StatementResult result;
 		StatementResult result2;
@@ -257,461 +511,5 @@ public class Neo4j {
 			System.out.println(moviePoint.id+", "+moviePoint.point);
 		}
 		}
-	}
-	
-	public MoviePoints searchArray(int id, ArrayList<MoviePoints> list){
-		for(MoviePoints moviePoint:list){
-			if(moviePoint.id==id){				 
-				return moviePoint;
-			}
-		}
-		return null;
-		
-	}
-	public String substring(String str){		
-		return str.substring(1, str.length()-1);		
-	}
-	public void writeLink(String url){
-		if(!readGraphData(url)){
-			try ( Session session = driver.session( AccessMode.WRITE ) )
-		    {
-		        try ( Transaction tx = session.beginTransaction(bookmark) )
-		        {		        	
-		    		tx.run( "CREATE (a:Link {url: {url}})", parameters("url", url));
-		            tx.success();
-		            tx.close();
-		        }
-		        finally
-		        {
-		            bookmark = session.lastBookmark();
-		        }
-		    }
-		}
-	}
-	
-	public void connectMovie_Link(String movieUrl, String link){
-		
-		try ( Session session = driver.session( AccessMode.WRITE )  )
-	    {
-	        try ( Transaction tx = session.beginTransaction(bookmark) )
-	        {		        	
-	    		tx.run("MATCH (m:Movie),(l:Link) "
-						+ "WHERE m.url = {movieUrl} AND l.url ={link} "
-						+ "CREATE (m)-[r:level1]->(l)", parameters( "movieUrl", movieUrl, "link", link) );
-	            tx.success();
-	            tx.close();
-	        }
-	        finally
-	        {
-	            bookmark = session.lastBookmark();
-	        }
-	    }
-	}
-	public void connectLink_Link(String link1, String link2){
-		if(!readGraphRealitonship(link1, link2)){
-			try ( Session session = driver.session( AccessMode.WRITE )  )
-			{
-			    try ( Transaction tx = session.beginTransaction(bookmark) )
-			    {		        	
-					tx.run("MATCH (u:Link),(l:Link) "
-							+ "WHERE u.url = {link1} AND l.url ={link2} "
-							+ "CREATE (u)-[r:level2]->(l)", parameters( "link1", link1, "link2", link2) );
-			        tx.success();
-			        tx.close();
-			    }
-			    finally
-			    {
-			        bookmark = session.lastBookmark();
-			    }
-			}
-		}
-	}
-
-	public void createGraph(ArrayList<Movie> movieList){
-		
-		String bookmark = null;
-		ArrayList<String> links_depth_1 = new ArrayList<>();
-		ArrayList<String> links_depth_2 = new ArrayList<>();
-		
-		this.cleanDatabase();
-				
-		for(Movie movie : movieList){
-
-			System.out.println(movie.getInfoBox().getTitle()+" Neo4j");
-			
-			if(!movie.getWikiURL_EN().equals("No Url Source")){
-				writeMovie(movie);
-				links_depth_1 = collectLinks(movie.getWikiURL_EN());
-				for(String link1 : links_depth_1){
-									
-					writeLink(link1);
-					connectMovie_Link(movie.getWikiURL_EN(), link1);
-					links_depth_2 = collectLinks(link1);
-					for(String link2 : links_depth_2){
-						writeLink(link2);
-						connectLink_Link(link1, link2);
-					}
-				}
-			}
-			else {
-				System.out.println(movie.getWikiURL_EN());
-			}
-		}				
-	}
-	
-	public void query(String id){
-		StatementResult result;
-		
-		try ( Session session = driver.session( AccessMode.READ ) )
-	    {
-	        try ( Transaction tx = session.beginTransaction(bookmark) )
-	        {
-	        	result = tx.run( "MATCH (:Movie { id: {id} })"
-	        			+ "-[r:level1]->(p) "
-	        			+ "RETURN p.url",
-	    		        parameters( "id", id ) );
-	        	tx.success();
-	            tx.close();
-	        }
-	        finally
-	        {
-	            bookmark = session.lastBookmark();
-	        }
-	    }
-		while(result.hasNext()){
-			System.out.println(result.next().get("p.url"));
-		}	
-	}
-
-	public class MoviePoints{
-		int id;
-		int point;
-		public MoviePoints(int id, int point){
-			this.id = id;
-			this.point = point;
-		}
-	}
-}
-
-
-/*
-public ArrayList<String> collectLinks(String wikiUrl){
-		
-		ArrayList<String> urlList = new ArrayList<>();
-		String tagPath = "#mw-content-text > p";
-		
-		Response res;
-		try {	
-			res = Jsoup.connect(wikiUrl).execute();
-			String html = res.body();
-			Document doc = Jsoup.parseBodyFragment(html);
-			Element paragraph = doc.select(tagPath).first();
-			Elements links = paragraph.select("a");
-			for(Element e : links){				
-				urlList.add("https://en.wikipedia.org"+e.attr("href"));
-			}
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-		return urlList;
-public void writeLink(String url, String bookmark){
-System.out.println(url);
-boolean found = false;
-bookmark = readGraph(url, found, bookmark);		
-
-if(!found){
-	try ( Session session = driver.session( AccessMode.WRITE ) )
-    {
-        try ( Transaction tx = session.beginTransaction(bookmark) )
-        {		        	
-    		tx.run( "CREATE (a:Link {url: {url}})", parameters("url", url));
-            tx.success();
-            tx.close();
-        }
-        finally
-        {
-            bookmark = session.lastBookmark();
-        }
-    }
-}
-
-
-}
-public void createGraph(ArrayList<Movie> movieList){
-		String bookmark = null;
-		ArrayList<String> links = new ArrayList<>();
-		cleanDatabase();
-		
-		for(Movie movie : movieList){
-			String movieUrl = movie.getWikiURL_EN();			
-			writeMovie(movie,bookmark);
-			
-			links = collectLinks(movieUrl);
-			
-			for(String url: links){
-				writeLink(url, bookmark);
-				connectMovie_Link(movieUrl, url, bookmark);
-			}
-		}
-		try ( Session session = driver.session( AccessMode.WRITE )  )
-	    {
-	        try ( Transaction tx = session.beginTransaction(bookmark) )
-	        {		        	
-	    		tx.run("MATCH (n) RETURN n" );
-	            tx.success();
-	            tx.close();
-	        }
-	        finally
-	        {
-	            bookmark = session.lastBookmark();
-	        }
-	    }
-	}
-*/
-
-
-
-/*public void writeLinks(String firstUrl, String bookmark, int depth){
-
-boolean found = false;
-ArrayList<String> newLinks = new ArrayList<>();		
-bookmark = readGraph(firstUrl, found, bookmark);		
-
-if(!found && depth<=1){
-	System.out.println(depth);
-	try ( Session session = driver.session( AccessMode.WRITE ) )
-    {
-        try ( Transaction tx = session.beginTransaction(bookmark) )
-        {		        	
-    		tx.run( "CREATE (a:Link {url: {url}})", parameters("url", firstUrl));
-            tx.success();
-            tx.close();
-            
-            newLinks = collectLinks(firstUrl);
-            
-            System.out.println("current link: "+firstUrl);
-            for(String newUrl : newLinks){
-            	System.out.println("sublinks: "+newUrl);
-            }
-           
-            depth++;
-            for(String newUrl : newLinks){
-            	connectLink_Link(firstUrl, newUrl, bookmark);
-            	writeLinks(newUrl, bookmark, depth);
-            }					
-        }
-        finally
-        {
-        	bookmark = session.lastBookmark();
-			
-        }
-    }
-}		
-
-}*/
-
-
-/*public void createGraph2(ArrayList<Movie> movieList){
-cleanDatabase();
-String bookmark = null;
-
-Movie movie = movieList.get(0);
-//for(Movie movie : movieList){
-	int depth = 0;
-	String movieUrl = movie.getWikiURL_EN();			
-	//writeMovie(movie,bookmark);
-	writeLinks(movieUrl, bookmark, depth);
-	
-	
-//}
-}*/
-
-
-/*public void connectLink_Link(String link1, String link2, String bookmark){
-try ( Session session = driver.session( AccessMode.WRITE )  )
-{
-    try ( Transaction tx = session.beginTransaction(bookmark) )
-    {		        	
-		tx.run("MATCH (u:Link),(l:Link) "
-				+ "WHERE u.url = {link1} AND l.url ={link2} "
-				+ "CREATE (u)-[r:contains]->(l)", parameters( "link1", link1, "link2", link2) );
-        tx.success();
-        tx.close();
-    }
-    finally
-    {
-        bookmark = session.lastBookmark();
-    }
-}
-}*/
-
-
-
-
-/*
-public void createDirectedByRelationship(ArrayList<Movie> list){
-	
-	this.cleanDatabase();
-	for(Movie movie : list){
-		cMovie(movie);
-		dMovie(movie);
-		//fMovie(movie);
-		String bookmark;
-		
-		try ( Session session = driver.session( AccessMode.WRITE )  )
-	    {
-	        try ( Transaction tx = session.beginTransaction() )
-	        {
-	        	
-	    		String id = new Integer(movie.getId()).toString();
-	    		String directorName = movie.getInfoBox().getDirector();
-	    		
-	    		tx.run("MATCH (m:Movie),(d:Director) "
-						+ "WHERE m.id={id} AND d.name={name} "
-						+ "CREATE (m)-[r:Directed_By]->(d)", parameters( "id", id, "name", directorName) );
-	    		
-	    		
-	            tx.success();
-	            tx.close();
-	        }
-	        finally
-	        {
-	            bookmark = session.lastBookmark();
-	        }
-	    }
-	}
-}
-public void createFilmedRelationship(ArrayList<Movie> list){
-	
-	
-	
-		
-		String bookmark;
-		
-		try ( Session session = driver.session( AccessMode.WRITE )  )
-	    {
-	        try ( Transaction tx = session.beginTransaction() )
-	        {		        	
-	    		tx.run("MATCH (f:Filmography),(d:Director) "
-						+ "WHERE f.name = d.name "
-						+ "CREATE (d)-[r:Filmed]->(f)");
-	            tx.success();
-	            tx.close();
-	        }
-	        finally
-	        {
-	            bookmark = session.lastBookmark();
-	        }
-	    }
-}
-public void cMovie(Movie movie){
-	String bookmark;
-	try ( Session session = driver.session( AccessMode.WRITE ) )
-    {
-        try ( Transaction tx = session.beginTransaction() )
-        {
-        	String title = movie.getInfoBox().getTitle();
-    		String id = new Integer(movie.getId()).toString();
-    		
-    		
-    		tx.run( "CREATE (a:Movie {title: {title}, id: {id}})", parameters( "title", title, "id", id));
-            tx.success();
-            tx.close();
-        }
-        finally
-        {
-            bookmark = session.lastBookmark();
-        }
-    }
-}
-public void dMovie(Movie movie){
-	String bookmark;
-	StatementResult result;
-	
-	try ( Session session = driver.session( AccessMode.READ ) )
-    {
-        try ( Transaction tx = session.beginTransaction() )
-        {
-        	String directorName = movie.getInfoBox().getDirector();
-    		String directorURL = this.getDirectorUrl(movie.getWikiURL_EN());
-    		
-    		
-    		result = tx.run( "MATCH (a:Director) WHERE a.name = {name} " +
-    		        "RETURN a.name AS name",
-    		        parameters( "name", directorName ) );
-            tx.close();
-        }
-        finally
-        {
-            bookmark = session.lastBookmark();
-        }
-    }		
-	if(!result.hasNext()){
-		try ( Session session = driver.session( AccessMode.WRITE ) )
-	    {
-	        try ( Transaction tx = session.beginTransaction(bookmark) )
-	        {
-	        	String directorName = movie.getInfoBox().getDirector();
-	    		String directorURL = this.getDirectorUrl(movie.getWikiURL_EN());
-	    		String url = getDirectorUrl(movie.getWikiURL_EN())+"#Filmography";
-	    		
-	    		tx.run( "CREATE (a:Director {name:{name}, url:{url}})", parameters("name", directorName,"url",directorURL) );	
-	    		tx.run( "CREATE (a:Filmography {url: {url}, name:{name}})", parameters( "url", url,"name",directorName));
-	    		tx.success();
-	            tx.close();
-	        }
-	        finally
-	        {
-	            bookmark = session.lastBookmark();
-	        }
-	    }
-	}
-}
-public void fMovie(Movie movie){
-		String bookmark;
-		try ( Session session = driver.session( AccessMode.WRITE ) )
-	    {
-	        try ( Transaction tx = session.beginTransaction() )
-	        {
-	        	String url = getDirectorUrl(movie.getWikiURL_EN())+"#Filmography";    		
-	        	String directorName = movie.getInfoBox().getDirector();
-	        	
-	    		tx.run( "CREATE (a:Filmography {url: {url}, name:{name}})", parameters( "url", url,"name",directorName));
-	            tx.success();
-	            tx.close();
-	        }
-	        finally
-	        {
-	            bookmark = session.lastBookmark();
-	        }
-	    }
-	
-}
-public String getDirectorUrl(String vikiURL) {
-		int index = 0;
-		try {	
-			Response res = Jsoup.connect(vikiURL).execute();
-			String html = res.body();
-			Document doc = Jsoup.parseBodyFragment(html);
-			Elements elements_th = doc.getElementsByTag("th");
-			
-			for(Element th : elements_th){
-				th = elements_th.get(index);
-				
-				if(th.text().equals("Directed by")){					
-					Element td = th.nextElementSibling();//sonraki sibling'i td öðesi oluyor
-					Element link = td.select("a").get(0);
-					String directorURL = "https://en.wikipedia.org"+link.attr("href");
-			    	return directorURL;						
-				}
-				else
-					index++;
-			}
-		} catch (IOException e) {			
-			e.getCause();
-		}
-		return null;		  	
 	}
 */
